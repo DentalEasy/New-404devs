@@ -1,6 +1,8 @@
 const header = document.querySelector(".site-header");
 const canvas = document.querySelector(".bg-canvas");
 const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const canUsePointerHover = () => window.matchMedia("(pointer: fine) and (hover: hover)").matches;
+const isCompactViewport = () => window.matchMedia("(max-width: 900px)").matches;
 
 const onScroll = () => {
   if (!header) return;
@@ -9,7 +11,7 @@ const onScroll = () => {
 
 const createCursorEffect = () => {
   if (prefersReducedMotion) return;
-  if (!window.matchMedia("(pointer: fine)").matches) return;
+  if (!canUsePointerHover()) return;
 
   const glow = document.querySelector(".cursor-glow");
   const dot = document.querySelector(".cursor-dot");
@@ -65,6 +67,7 @@ const createCanvasBackground = () => {
 
   let rafId = 0;
   let isAnimating = false;
+  let frameInterval = isCompactViewport() ? (1000 / 24) : (1000 / 30);
 
   const state = {
     width: 0,
@@ -72,6 +75,7 @@ const createCanvasBackground = () => {
     dpr: 1,
     columns: [],
     pulse: 0,
+    lastFrameAt: 0,
   };
 
   const palette = [
@@ -108,6 +112,14 @@ const createCanvasBackground = () => {
 
   const randomBetween = (min, max) => min + Math.random() * (max - min);
 
+  const getColumnSpacing = () => {
+    if (state.width <= 900) {
+      return Math.max(76, Math.floor(state.width / 10));
+    }
+
+    return Math.max(56, Math.floor(state.width / 18));
+  };
+
   const createColumn = (index, spacing) => {
     const size = randomBetween(12, 18);
     return {
@@ -126,6 +138,7 @@ const createCanvasBackground = () => {
     state.width = Math.max(window.innerWidth, 1);
     state.height = Math.max(window.innerHeight, 1);
     state.dpr = Math.min(window.devicePixelRatio || 1, 2);
+    frameInterval = state.width <= 900 ? (1000 / 24) : (1000 / 30);
 
     canvas.width = Math.floor(state.width * state.dpr);
     canvas.height = Math.floor(state.height * state.dpr);
@@ -133,7 +146,7 @@ const createCanvasBackground = () => {
     canvas.style.height = `${state.height}px`;
     context.setTransform(state.dpr, 0, 0, state.dpr, 0, 0);
 
-    const spacing = Math.max(56, Math.floor(state.width / 18));
+    const spacing = getColumnSpacing();
     const nextCount = Math.ceil(state.width / spacing) + 3;
     state.columns = Array.from({ length: nextCount }, (_, index) => createColumn(index, spacing));
   };
@@ -147,12 +160,18 @@ const createCanvasBackground = () => {
     }
   };
 
-  const tick = () => {
+  const tick = (time = 0) => {
     if (document.hidden) {
       isAnimating = false;
       return;
     }
 
+    if (time - state.lastFrameAt < frameInterval) {
+      rafId = window.requestAnimationFrame(tick);
+      return;
+    }
+
+    state.lastFrameAt = time;
     ensureCanvasSize();
 
     state.pulse += 0.008;
@@ -199,11 +218,14 @@ const createCanvasBackground = () => {
     context.textBaseline = "top";
     context.lineWidth = 1;
 
+    const drawLinkMesh = state.width > 980;
+    const shadowBlurStrength = state.width <= 900 ? 10 : 16;
+
     state.columns.forEach((column, index) => {
       column.y += column.speed;
 
       if (column.y > state.height + 80) {
-        const spacing = Math.max(56, Math.floor(state.width / 18));
+        const spacing = getColumnSpacing();
         state.columns[index] = createColumn(index, spacing);
         state.columns[index].y = randomBetween(-220, -40);
       }
@@ -225,7 +247,7 @@ const createCanvasBackground = () => {
       context.fillStyle = tailGradient;
       context.fillRect(current.x - 10, current.y - fadeHeight, 2, fadeHeight + current.size * 1.2);
 
-      context.shadowBlur = 16;
+      context.shadowBlur = shadowBlurStrength;
       context.shadowColor = `rgba(${current.color},0.18)`;
       context.fillStyle = `rgba(${current.color},${Math.min(current.alpha * 1.28, 0.34)})`;
       context.fillText(current.text, current.x, current.y);
@@ -236,7 +258,7 @@ const createCanvasBackground = () => {
       }
       context.shadowBlur = 0;
 
-      if (index < state.columns.length - 1) {
+      if (drawLinkMesh && index < state.columns.length - 1) {
         const next = state.columns[index + 1];
         if (Math.abs(current.y - next.y) < 90) {
           context.beginPath();
@@ -254,6 +276,7 @@ const createCanvasBackground = () => {
   const startAnimation = () => {
     if (isAnimating || document.hidden) return;
     isAnimating = true;
+    state.lastFrameAt = 0;
     tick();
   };
 
@@ -302,6 +325,7 @@ const createCanvasBackground = () => {
 const createGsapAnimations = () => {
   if (prefersReducedMotion) return;
   if (typeof window.gsap === "undefined") return;
+  if (isCompactViewport()) return;
 
   const { gsap } = window;
   const { ScrollTrigger } = window;
@@ -599,24 +623,47 @@ const createGsapAnimations = () => {
 };
 
 const createCardHoverEffects = () => {
+  if (prefersReducedMotion) return;
+  if (!canUsePointerHover()) return;
+
   const cards = document.querySelectorAll(
     ".metric-card, .content-card, .tech-card, .testimonial-card, .process-item, .display-grid article, .stack-line, .tech-summary, .cta-card, .team-card"
   );
 
   cards.forEach((card) => {
-    card.addEventListener("pointermove", (event) => {
+    let raf = 0;
+    let pointerEvent = null;
+
+    const render = () => {
+      if (!pointerEvent) {
+        raf = 0;
+        return;
+      }
+
       const rect = card.getBoundingClientRect();
-      const x = event.clientX - rect.left;
-      const y = event.clientY - rect.top;
+      const x = pointerEvent.clientX - rect.left;
+      const y = pointerEvent.clientY - rect.top;
       const rotateY = ((x / rect.width) - 0.5) * 8;
       const rotateX = (0.5 - (y / rect.height)) * 8;
 
       card.style.setProperty("--card-glow-x", `${x}px`);
       card.style.setProperty("--card-glow-y", `${y}px`);
       card.style.transform = `perspective(900px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-4px)`;
-    });
+      raf = 0;
+    };
+
+    card.addEventListener("pointermove", (event) => {
+      pointerEvent = event;
+      if (raf) return;
+      raf = window.requestAnimationFrame(render);
+    }, { passive: true });
 
     card.addEventListener("pointerleave", () => {
+      pointerEvent = null;
+      if (raf) {
+        window.cancelAnimationFrame(raf);
+        raf = 0;
+      }
       card.style.transform = "";
     });
   });

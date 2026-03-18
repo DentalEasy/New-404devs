@@ -238,7 +238,7 @@ textarea {
 .brand {
   display: inline-flex;
   align-items: center;
-  gap: 0.8rem;
+  gap: 0;
   font-family: "Space Grotesk", sans-serif;
   letter-spacing: -0.04em;
 }
@@ -259,6 +259,14 @@ textarea {
     0 0 24px rgba(255, 0, 128, 0.14);
   overflow: hidden;
   flex: 0 0 auto;
+}
+
+.brand:hover .brand-badge,
+.brand:focus-visible .brand-badge {
+  border-color: rgba(0, 229, 255, 0.28);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.05),
+    0 0 22px rgba(0, 229, 255, 0.18);
 }
 
 .brand-badge__ring {
