@@ -51,6 +51,29 @@
         </div>
       </header>
 
+      <aside class="floating-sidebar" aria-label="Navegacao por secoes">
+        <a href="#servicos" data-section-link="servicos">
+          <span class="floating-sidebar__dot" aria-hidden="true"></span>
+          <span class="floating-sidebar__label">Servicos</span>
+        </a>
+        <a href="#processo" data-section-link="processo">
+          <span class="floating-sidebar__dot" aria-hidden="true"></span>
+          <span class="floating-sidebar__label">Processo</span>
+        </a>
+        <a href="#tecnologias" data-section-link="tecnologias">
+          <span class="floating-sidebar__dot" aria-hidden="true"></span>
+          <span class="floating-sidebar__label">Tecnologias</span>
+        </a>
+        <a href="#time" data-section-link="time">
+          <span class="floating-sidebar__dot" aria-hidden="true"></span>
+          <span class="floating-sidebar__label">Time</span>
+        </a>
+        <a href="#contato" data-section-link="contato">
+          <span class="floating-sidebar__dot" aria-hidden="true"></span>
+          <span class="floating-sidebar__label">Contato</span>
+        </a>
+      </aside>
+
       <main id="top">
         <section class="intro-video-section">
           <div class="intro-video-sticky" aria-hidden="true">
@@ -58,7 +81,6 @@
               class="intro-video"
               autoplay
               muted
-              loop
               playsinline
               preload="auto"
             >
@@ -67,7 +89,7 @@
             <div class="intro-video-overlay"></div>
             <div class="intro-video-vignette"></div>
             <div class="intro-video-copy">
-              <div class="scroll-cue" aria-hidden="true">
+              <button class="scroll-cue" type="button" aria-label="Arraste para baixo">
                 <span class="scroll-cue__mouse">
                   <span class="scroll-cue__wheel"></span>
                 </span>
@@ -75,7 +97,7 @@
                   <span></span>
                   <span></span>
                 </span>
-              </div>
+              </button>
               <p class="eyebrow">404DEVS EXPERIENCE</p>
               <p class="intro-video-title">Scroll para entrar</p>
             </div>
@@ -478,7 +500,7 @@
                 <div class="swiper-slide team-slide">
                   <article class="team-card">
                     <img
-                      src="./assets/Wendell.jpeg"
+                      src="./assets/wendell.jpeg"
                       alt="Foto de Wendell"
                     >
                     <div class="team-card__overlay"></div>

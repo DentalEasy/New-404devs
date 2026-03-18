@@ -1,12 +1,128 @@
 const header = document.querySelector(".site-header");
+const floatingSidebar = document.querySelector(".floating-sidebar");
+const sidebarLinks = Array.from(document.querySelectorAll(".floating-sidebar [data-section-link]"));
+const sidebarSectionIds = ["servicos", "processo", "tecnologias", "time", "contato"];
+const sidebarSections = sidebarSectionIds
+  .map((id) => document.getElementById(id))
+  .filter(Boolean);
+const introSection = document.querySelector(".intro-video-section");
+const heroSection = document.querySelector(".hero-section");
+const introVideo = document.querySelector(".intro-video");
+const scrollCue = document.querySelector(".scroll-cue");
 const canvas = document.querySelector(".bg-canvas");
 const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-const canUsePointerHover = () => window.matchMedia("(pointer: fine) and (hover: hover)").matches;
+const prefersCoarsePointer = window.matchMedia("(pointer: coarse)").matches;
 const isCompactViewport = () => window.matchMedia("(max-width: 900px)").matches;
+const hasLowCpu = typeof navigator.hardwareConcurrency === "number" && navigator.hardwareConcurrency <= 4;
+const hasSaveData = Boolean(navigator.connection && navigator.connection.saveData);
+const canUsePointerHover = () => window.matchMedia("(pointer: fine) and (hover: hover)").matches;
+
+let introRevealY = Math.max(220, window.innerHeight * 0.55);
+let sidebarSectionTops = [];
+let scrollScheduled = false;
+
+const recalculateScrollAnchors = () => {
+  const headerHeight = header ? header.offsetHeight : 0;
+  const revealOffset = Math.max(56, headerHeight + 10);
+
+  if (introSection) {
+    introRevealY = (introSection.offsetTop + introSection.offsetHeight) - revealOffset;
+  } else if (heroSection) {
+    introRevealY = Math.max(0, heroSection.offsetTop - revealOffset);
+  } else {
+    introRevealY = Math.max(220, window.innerHeight * 0.55);
+  }
+
+  sidebarSectionTops = sidebarSections.map((section) => ({
+    id: section.id,
+    top: section.offsetTop,
+  }));
+};
+
+const hasPassedAnimatedBackground = () => {
+  if (!header) return false;
+  return window.scrollY >= introRevealY;
+};
 
 const onScroll = () => {
   if (!header) return;
-  header.classList.toggle("is-scrolled", window.scrollY > 16);
+
+  const hasPassedIntro = hasPassedAnimatedBackground();
+
+  header.classList.toggle("is-visible", hasPassedIntro);
+  header.classList.toggle("is-scrolled", hasPassedIntro && window.scrollY > 16);
+
+  if (floatingSidebar) {
+    floatingSidebar.classList.toggle("is-visible", hasPassedIntro);
+  }
+
+  if (sidebarSections.length && sidebarLinks.length) {
+    const markerY = window.scrollY + (window.innerHeight * 0.4);
+    let activeId = sidebarSectionTops.length ? sidebarSectionTops[0].id : "";
+
+    sidebarSectionTops.forEach((section) => {
+      if (section.top <= markerY) {
+        activeId = section.id;
+      }
+    });
+
+    sidebarLinks.forEach((link) => {
+      const isActive = link.dataset.sectionLink === activeId;
+      link.classList.toggle("is-active", isActive);
+      if (isActive) {
+        link.setAttribute("aria-current", "true");
+      } else {
+        link.removeAttribute("aria-current");
+      }
+    });
+  }
+};
+
+const requestScrollUpdate = () => {
+  if (scrollScheduled) return;
+  scrollScheduled = true;
+
+  window.requestAnimationFrame(() => {
+    scrollScheduled = false;
+    onScroll();
+  });
+};
+
+const createIntroAutoScroll = () => {
+  if (!heroSection) return;
+
+  let hasAutoScrolled = false;
+
+  const revealHeaderNow = () => {
+    if (!header) return;
+    header.classList.add("is-visible");
+    if (window.scrollY > 16) {
+      header.classList.add("is-scrolled");
+    }
+  };
+
+  const goToHero = () => {
+    if (hasAutoScrolled) return;
+    hasAutoScrolled = true;
+
+    heroSection.scrollIntoView({
+      behavior: prefersReducedMotion ? "auto" : "smooth",
+      block: "start",
+    });
+
+    window.setTimeout(() => {
+      onScroll();
+      revealHeaderNow();
+    }, prefersReducedMotion ? 0 : 360);
+  };
+
+  if (scrollCue) {
+    scrollCue.addEventListener("click", goToHero);
+  }
+
+  if (!introVideo) return;
+
+  introVideo.addEventListener("ended", goToHero, { once: true });
 };
 
 const createCursorEffect = () => {
@@ -67,7 +183,31 @@ const createCanvasBackground = () => {
 
   let rafId = 0;
   let isAnimating = false;
-  let frameInterval = isCompactViewport() ? (1000 / 24) : (1000 / 30);
+
+  const getPerfProfile = () => {
+    const compact = isCompactViewport();
+    const lightMode = compact || prefersCoarsePointer || hasLowCpu || hasSaveData;
+
+    if (lightMode) {
+      return {
+        dprCap: 1.2,
+        spacingDivisor: 10,
+        minSpacing: 74,
+        frameMs: 1000 / 22,
+        shadowBlur: 9,
+        drawMesh: false,
+      };
+    }
+
+    return {
+      dprCap: 1.8,
+      spacingDivisor: 18,
+      minSpacing: 56,
+      frameMs: 1000 / 30,
+      shadowBlur: 16,
+      drawMesh: true,
+    };
+  };
 
   const state = {
     width: 0,
@@ -75,7 +215,8 @@ const createCanvasBackground = () => {
     dpr: 1,
     columns: [],
     pulse: 0,
-    lastFrameAt: 0,
+    lastFrameTime: 0,
+    profile: getPerfProfile(),
   };
 
   const palette = [
@@ -112,13 +253,10 @@ const createCanvasBackground = () => {
 
   const randomBetween = (min, max) => min + Math.random() * (max - min);
 
-  const getColumnSpacing = () => {
-    if (state.width <= 900) {
-      return Math.max(76, Math.floor(state.width / 10));
-    }
-
-    return Math.max(56, Math.floor(state.width / 18));
-  };
+  const getColumnSpacing = () => Math.max(
+    state.profile.minSpacing,
+    Math.floor(state.width / state.profile.spacingDivisor)
+  );
 
   const createColumn = (index, spacing) => {
     const size = randomBetween(12, 18);
@@ -137,8 +275,8 @@ const createCanvasBackground = () => {
   const resize = () => {
     state.width = Math.max(window.innerWidth, 1);
     state.height = Math.max(window.innerHeight, 1);
-    state.dpr = Math.min(window.devicePixelRatio || 1, 2);
-    frameInterval = state.width <= 900 ? (1000 / 24) : (1000 / 30);
+    state.profile = getPerfProfile();
+    state.dpr = Math.min(window.devicePixelRatio || 1, state.profile.dprCap);
 
     canvas.width = Math.floor(state.width * state.dpr);
     canvas.height = Math.floor(state.height * state.dpr);
@@ -163,15 +301,17 @@ const createCanvasBackground = () => {
   const tick = (time = 0) => {
     if (document.hidden) {
       isAnimating = false;
+      rafId = 0;
       return;
     }
 
-    if (time - state.lastFrameAt < frameInterval) {
+    if (time - state.lastFrameTime < state.profile.frameMs) {
       rafId = window.requestAnimationFrame(tick);
       return;
     }
 
-    state.lastFrameAt = time;
+    state.lastFrameTime = time;
+
     ensureCanvasSize();
 
     state.pulse += 0.008;
@@ -218,9 +358,6 @@ const createCanvasBackground = () => {
     context.textBaseline = "top";
     context.lineWidth = 1;
 
-    const drawLinkMesh = state.width > 980;
-    const shadowBlurStrength = state.width <= 900 ? 10 : 16;
-
     state.columns.forEach((column, index) => {
       column.y += column.speed;
 
@@ -247,7 +384,7 @@ const createCanvasBackground = () => {
       context.fillStyle = tailGradient;
       context.fillRect(current.x - 10, current.y - fadeHeight, 2, fadeHeight + current.size * 1.2);
 
-      context.shadowBlur = shadowBlurStrength;
+      context.shadowBlur = state.profile.shadowBlur;
       context.shadowColor = `rgba(${current.color},0.18)`;
       context.fillStyle = `rgba(${current.color},${Math.min(current.alpha * 1.28, 0.34)})`;
       context.fillText(current.text, current.x, current.y);
@@ -258,7 +395,7 @@ const createCanvasBackground = () => {
       }
       context.shadowBlur = 0;
 
-      if (drawLinkMesh && index < state.columns.length - 1) {
+      if (state.profile.drawMesh && index < state.columns.length - 1) {
         const next = state.columns[index + 1];
         if (Math.abs(current.y - next.y) < 90) {
           context.beginPath();
@@ -276,8 +413,8 @@ const createCanvasBackground = () => {
   const startAnimation = () => {
     if (isAnimating || document.hidden) return;
     isAnimating = true;
-    state.lastFrameAt = 0;
-    tick();
+    state.lastFrameTime = 0;
+    rafId = window.requestAnimationFrame(tick);
   };
 
   const stopAnimation = () => {
@@ -325,7 +462,7 @@ const createCanvasBackground = () => {
 const createGsapAnimations = () => {
   if (prefersReducedMotion) return;
   if (typeof window.gsap === "undefined") return;
-  if (isCompactViewport()) return;
+  if (isCompactViewport() || prefersCoarsePointer || hasSaveData) return;
 
   const { gsap } = window;
   const { ScrollTrigger } = window;
@@ -360,14 +497,6 @@ const createGsapAnimations = () => {
     .from(".hero-actions .button", { y: 16, stagger: 0.1 }, 0.32)
     .from(".hero-metrics .metric-card", { y: 18, stagger: 0.08 }, 0.38)
     .from(".hero-panel .panel-frame", { x: 40, rotateY: -8 }, 0.16);
-
-  gsap.to(".hero-panel .panel-frame", {
-    y: -12,
-    duration: 3.8,
-    repeat: -1,
-    yoyo: true,
-    ease: "sine.inOut",
-  });
 
   gsap.to(".ambient-one", {
     x: 36,
@@ -623,7 +752,6 @@ const createGsapAnimations = () => {
 };
 
 const createCardHoverEffects = () => {
-  if (prefersReducedMotion) return;
   if (!canUsePointerHover()) return;
 
   const cards = document.querySelectorAll(
@@ -657,6 +785,14 @@ const createCardHoverEffects = () => {
       if (raf) return;
       raf = window.requestAnimationFrame(render);
     }, { passive: true });
+
+    card.addEventListener("pointerdown", () => {
+      pointerEvent = null;
+      if (raf) {
+        window.cancelAnimationFrame(raf);
+        raf = 0;
+      }
+    });
 
     card.addEventListener("pointerleave", () => {
       pointerEvent = null;
@@ -742,11 +878,30 @@ const createTeamSwiper = () => {
   });
 };
 
+recalculateScrollAnchors();
+onScroll();
+
+window.addEventListener("scroll", requestScrollUpdate, { passive: true });
+window.addEventListener("resize", () => {
+  recalculateScrollAnchors();
+  requestScrollUpdate();
+}, { passive: true });
+window.addEventListener("orientationchange", () => {
+  recalculateScrollAnchors();
+  requestScrollUpdate();
+}, { passive: true });
+window.addEventListener("load", () => {
+  recalculateScrollAnchors();
+  onScroll();
+});
+window.addEventListener("pageshow", () => {
+  recalculateScrollAnchors();
+  onScroll();
+});
+
 createCanvasBackground();
 createCursorEffect();
+createIntroAutoScroll();
 createGsapAnimations();
 createCardHoverEffects();
 createTeamSwiper();
-onScroll();
-
-window.addEventListener("scroll", onScroll, { passive: true });
