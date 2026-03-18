@@ -445,6 +445,88 @@ textarea {
   z-index: 1;
 }
 
+.scroll-cue {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  margin-bottom: 0.85rem;
+  filter: drop-shadow(0 0 14px rgba(0, 229, 255, 0.2));
+}
+
+.scroll-cue__mouse {
+  width: 1.75rem;
+  height: 2.8rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.46);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(0, 0, 0, 0.14));
+  display: inline-flex;
+  justify-content: center;
+  padding-top: 0.38rem;
+}
+
+.scroll-cue__wheel {
+  width: 0.23rem;
+  height: 0.55rem;
+  border-radius: 999px;
+  background: rgba(0, 229, 255, 0.92);
+  animation: scrollCueWheel 1.55s ease-in-out infinite;
+}
+
+.scroll-cue__chevrons {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.08rem;
+}
+
+.scroll-cue__chevrons span {
+  width: 0.7rem;
+  height: 0.7rem;
+  border-right: 2px solid rgba(255, 255, 255, 0.68);
+  border-bottom: 2px solid rgba(255, 255, 255, 0.68);
+  transform: rotate(45deg);
+  animation: scrollCueChevron 1.55s ease-in-out infinite;
+}
+
+.scroll-cue__chevrons span:last-child {
+  margin-top: -0.33rem;
+  animation-delay: 0.22s;
+}
+
+@keyframes scrollCueWheel {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  65% {
+    transform: translateY(0.8rem);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+}
+
+@keyframes scrollCueChevron {
+  0% {
+    opacity: 0.18;
+    transform: rotate(45deg) translate(-1px, -1px);
+  }
+
+  45% {
+    opacity: 0.92;
+  }
+
+  100% {
+    opacity: 0.22;
+    transform: rotate(45deg) translate(1px, 1px);
+  }
+}
+
 .intro-video-title {
   margin: 0;
   font-family: "Space Grotesk", sans-serif;
@@ -1259,6 +1341,11 @@ textarea {
 
   .intro-video-section {
     height: 100vh;
+  }
+
+  .scroll-cue__wheel,
+  .scroll-cue__chevrons span {
+    animation: none;
   }
 
   .js.motion-ready [data-reveal],
