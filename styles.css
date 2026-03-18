@@ -23,6 +23,12 @@ html {
   scroll-behavior: smooth;
 }
 
+html,
+body {
+  max-width: 100%;
+  overflow-x: clip;
+}
+
 body {
   margin: 0;
   background:
@@ -383,12 +389,14 @@ textarea {
 .intro-video-section {
   position: relative;
   height: 102vh;
+  height: 102svh;
 }
 
 .intro-video-sticky {
   position: sticky;
   top: 0;
   height: 100vh;
+  height: 100svh;
   overflow: hidden;
   isolation: isolate;
   background: #030303;
@@ -793,6 +801,7 @@ textarea {
   font-family: "Space Grotesk", sans-serif;
   font-size: 1.28rem;
   letter-spacing: -0.03em;
+  overflow-wrap: anywhere;
 }
 
 .team-card__identity p {
@@ -873,6 +882,7 @@ textarea {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
   gap: 1rem;
   padding: 0.95rem 1rem;
   border: 1px solid rgba(255, 255, 255, 0.07);
@@ -888,6 +898,7 @@ textarea {
 .tag {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   padding: 0.35rem 0.6rem;
   border-radius: 999px;
   background: rgba(224, 224, 224, 0.08);
@@ -1283,9 +1294,17 @@ textarea {
   .site-header {
     width: min(92vw, 760px);
   }
+
+  .hero-text {
+    max-width: 100%;
+  }
 }
 
 @media (max-width: 720px) {
+  .section {
+    padding: 2rem 0 3.6rem;
+  }
+
   .footer-row {
     flex-direction: column;
     align-items: flex-start;
@@ -1294,25 +1313,61 @@ textarea {
   .site-header {
     top: 0.75rem;
     width: calc(100% - 1rem);
-    border-radius: 1.4rem;
+    border-radius: 1.1rem;
   }
 
   .header-row {
     min-height: 4rem;
-    padding: 0.55rem 0.7rem 0.55rem 0.9rem;
+    padding: 0.5rem 0.55rem 0.5rem 0.75rem;
+    gap: 0.55rem;
   }
 
   .brand-copy {
     display: none;
   }
 
+  .site-header .button-outline {
+    min-height: 2.55rem;
+    padding: 0.58rem 0.82rem;
+    font-size: 0.82rem;
+    white-space: nowrap;
+  }
+
+  .intro-video-section {
+    height: 96vh;
+    height: 96svh;
+  }
+
+  .intro-video-copy {
+    bottom: 1.6rem;
+    width: calc(100% - 2rem);
+  }
+
   .hero-section {
-    margin-top: -5vh;
-    padding-top: 3rem;
+    margin-top: -4vh;
+    margin-top: -4svh;
+    padding-top: 2.6rem;
   }
 
   .hero-grid {
     gap: 1.4rem;
+  }
+
+  .hero-title {
+    font-size: clamp(3rem, 19vw, 4.9rem);
+  }
+
+  .hero-subtitle,
+  .display-heading {
+    max-width: 100%;
+  }
+
+  .hero-actions {
+    gap: 0.65rem;
+  }
+
+  .hero-actions .button {
+    width: 100%;
   }
 
   .process-item {
@@ -1324,7 +1379,87 @@ textarea {
   }
 
   .stack-line {
-    flex-direction: column;
     align-items: flex-start;
+  }
+
+  .team-swiper {
+    padding-top: 24px;
+    padding-bottom: 58px;
+  }
+
+  .team-slide {
+    width: min(82vw, 320px);
+    height: min(122vw, 460px);
+  }
+
+  .team-card__footer {
+    flex-wrap: wrap;
+  }
+
+  .footer-socials {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .footer-socials a {
+    flex: 1 1 10rem;
+  }
+}
+
+@media (max-width: 560px) {
+  .site-header {
+    top: 0.55rem;
+    width: calc(100% - 0.7rem);
+  }
+
+  .header-row {
+    min-height: 3.6rem;
+    padding: 0.42rem 0.42rem 0.42rem 0.58rem;
+  }
+
+  .brand-badge {
+    width: 2.45rem;
+    height: 2.45rem;
+  }
+
+  .site-header .button-outline {
+    min-height: 2.25rem;
+    padding: 0.46rem 0.62rem;
+    font-size: 0.74rem;
+  }
+
+  .hero-section {
+    padding-top: 2.2rem;
+  }
+
+  .hero-title {
+    font-size: clamp(2.35rem, 16.8vw, 3.4rem);
+  }
+
+  .hero-subtitle {
+    font-size: clamp(1.2rem, 7.2vw, 1.8rem);
+  }
+
+  .eyebrow,
+  .mini-label,
+  .card-index,
+  .process-step,
+  .footer-meta {
+    letter-spacing: 0.12em;
+    font-size: 0.65rem;
+  }
+
+  .content-card,
+  .testimonial-card,
+  .tech-summary,
+  .tech-card,
+  .process-item,
+  .metric-card {
+    padding: 1.05rem;
+  }
+
+  .team-slide {
+    width: min(88vw, 300px);
+    height: min(130vw, 430px);
   }
 }

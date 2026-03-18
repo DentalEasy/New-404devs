@@ -63,6 +63,9 @@ const createCanvasBackground = () => {
   const context = canvas.getContext("2d");
   if (!context) return;
 
+  let rafId = 0;
+  let isAnimating = false;
+
   const state = {
     width: 0,
     height: 0,
@@ -120,8 +123,8 @@ const createCanvasBackground = () => {
   };
 
   const resize = () => {
-    state.width = window.innerWidth;
-    state.height = window.innerHeight;
+    state.width = Math.max(window.innerWidth, 1);
+    state.height = Math.max(window.innerHeight, 1);
     state.dpr = Math.min(window.devicePixelRatio || 1, 2);
 
     canvas.width = Math.floor(state.width * state.dpr);
@@ -135,7 +138,23 @@ const createCanvasBackground = () => {
     state.columns = Array.from({ length: nextCount }, (_, index) => createColumn(index, spacing));
   };
 
+  const ensureCanvasSize = () => {
+    const nextWidth = Math.max(window.innerWidth, 1);
+    const nextHeight = Math.max(window.innerHeight, 1);
+
+    if (nextWidth !== state.width || nextHeight !== state.height || canvas.width === 0 || canvas.height === 0) {
+      resize();
+    }
+  };
+
   const tick = () => {
+    if (document.hidden) {
+      isAnimating = false;
+      return;
+    }
+
+    ensureCanvasSize();
+
     state.pulse += 0.008;
     context.clearRect(0, 0, state.width, state.height);
 
@@ -229,13 +248,55 @@ const createCanvasBackground = () => {
       }
     });
 
-    window.requestAnimationFrame(tick);
+    rafId = window.requestAnimationFrame(tick);
+  };
+
+  const startAnimation = () => {
+    if (isAnimating || document.hidden) return;
+    isAnimating = true;
+    tick();
+  };
+
+  const stopAnimation = () => {
+    if (!rafId) return;
+    window.cancelAnimationFrame(rafId);
+    rafId = 0;
+    isAnimating = false;
   };
 
   window.addEventListener("resize", resize, { passive: true });
+  window.addEventListener("orientationchange", () => {
+    resize();
+    startAnimation();
+  }, { passive: true });
+
+  window.addEventListener("pageshow", () => {
+    resize();
+    startAnimation();
+  });
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+      stopAnimation();
+      return;
+    }
+
+    resize();
+    startAnimation();
+  });
+
+  canvas.addEventListener("contextlost", (event) => {
+    event.preventDefault();
+    stopAnimation();
+  });
+
+  canvas.addEventListener("contextrestored", () => {
+    resize();
+    startAnimation();
+  });
 
   resize();
-  window.requestAnimationFrame(tick);
+  startAnimation();
 };
 
 const createGsapAnimations = () => {
@@ -573,8 +634,8 @@ const createTeamSwiper = () => {
     loop: true,
     initialSlide: 0,
     speed: 800,
-    allowTouchMove: false,
-    simulateTouch: false,
+    allowTouchMove: true,
+    simulateTouch: true,
     watchSlidesProgress: true,
     watchSlidesVisibility: true,
     observer: true,
@@ -618,12 +679,17 @@ const createTeamSwiper = () => {
     breakpoints: {
       0: {
         slidesPerView: 1.1,
+        centeredSlides: true,
       },
       640: {
         slidesPerView: 1.4,
+        centeredSlides: true,
       },
       960: {
         slidesPerView: "auto",
+        centeredSlides: true,
+        allowTouchMove: false,
+        simulateTouch: false,
       },
     },
   });
