@@ -34,6 +34,87 @@ body {
   font-family: "Manrope", sans-serif;
 }
 
+.cursor-glow,
+.cursor-dot {
+  display: none;
+}
+
+@media (pointer: fine) {
+  body,
+  a,
+  button,
+  input,
+  textarea,
+  [role="button"] {
+    cursor: none;
+  }
+
+  .cursor-glow,
+  .cursor-dot {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0;
+    transition:
+      opacity 0.22s ease,
+      transform 0.22s ease,
+      width 0.22s ease,
+      height 0.22s ease,
+      border-color 0.22s ease,
+      background-color 0.22s ease;
+  }
+
+  .cursor-glow {
+    width: 42px;
+    height: 42px;
+    margin-left: -21px;
+    margin-top: -21px;
+    border-radius: 999px;
+    border: 1px solid rgba(0, 229, 255, 0.26);
+    background:
+      radial-gradient(circle at center, rgba(0, 229, 255, 0.12), rgba(255, 184, 0, 0.06) 58%, transparent 72%);
+    box-shadow:
+      0 0 24px rgba(0, 229, 255, 0.16),
+      0 0 42px rgba(255, 184, 0, 0.08);
+    mix-blend-mode: screen;
+  }
+
+  .cursor-dot {
+    width: 10px;
+    height: 10px;
+    margin-left: -5px;
+    margin-top: -5px;
+    border-radius: 999px;
+    background: var(--foreground);
+    box-shadow:
+      0 0 12px rgba(255, 255, 255, 0.5),
+      0 0 22px rgba(0, 229, 255, 0.22);
+  }
+
+  body.cursor-active .cursor-glow,
+  body.cursor-active .cursor-dot {
+    opacity: 1;
+  }
+
+  body.cursor-hover .cursor-glow {
+    width: 64px;
+    height: 64px;
+    margin-left: -32px;
+    margin-top: -32px;
+    border-color: rgba(255, 184, 0, 0.34);
+    background:
+      radial-gradient(circle at center, rgba(255, 184, 0, 0.12), rgba(0, 229, 255, 0.07) 60%, transparent 75%);
+  }
+
+  body.cursor-hover .cursor-dot {
+    transform: scale(1.35);
+    background: var(--magenta);
+  }
+}
+
 a {
   color: inherit;
   text-decoration: none;
@@ -105,17 +186,34 @@ textarea {
 }
 
 .site-header {
-  position: sticky;
-  top: 0;
+  position: fixed;
+  top: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
   z-index: 20;
-  backdrop-filter: blur(18px);
-  background: rgba(5, 5, 5, 0.72);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  width: min(1040px, calc(100% - 2rem));
+  margin: 0;
+  backdrop-filter: blur(14px) saturate(1.15);
+  background:
+    linear-gradient(135deg, rgba(255, 184, 0, 0.05), rgba(0, 229, 255, 0.04) 45%, rgba(0, 255, 65, 0.035)),
+    rgba(6, 6, 6, 0.34);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 999px;
+  box-shadow:
+    0 14px 34px rgba(0, 0, 0, 0.16),
+    0 0 0 1px rgba(255, 255, 255, 0.02),
+    inset 0 1px 0 rgba(255, 255, 255, 0.035);
 }
 
 .site-header.is-scrolled {
-  background: rgba(5, 5, 5, 0.88);
-  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.28);
+  background:
+    linear-gradient(135deg, rgba(255, 184, 0, 0.08), rgba(0, 229, 255, 0.06) 45%, rgba(0, 255, 65, 0.05)),
+    rgba(5, 5, 5, 0.5);
+  border-color: rgba(0, 229, 255, 0.12);
+  box-shadow:
+    0 16px 38px rgba(0, 0, 0, 0.22),
+    0 0 0 1px rgba(255, 255, 255, 0.03),
+    0 0 24px rgba(0, 229, 255, 0.06);
 }
 
 .header-row,
@@ -127,7 +225,8 @@ textarea {
 }
 
 .header-row {
-  min-height: 4.9rem;
+  min-height: 4.45rem;
+  padding: 0.6rem 0.85rem 0.6rem 1rem;
 }
 
 .brand {
@@ -216,17 +315,29 @@ textarea {
 
 .site-nav {
   display: inline-flex;
-  gap: 1.5rem;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.018);
+  border: 1px solid rgba(255, 255, 255, 0.045);
   color: rgba(224, 224, 224, 0.8);
   font-size: 0.96rem;
 }
 
 .site-nav a {
-  transition: color 0.2s ease;
+  padding: 0.72rem 1rem;
+  border-radius: 999px;
+  transition:
+    color 0.2s ease,
+    background-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .site-nav a:hover {
   color: var(--cyan);
+  background: rgba(0, 229, 255, 0.08);
+  box-shadow: inset 0 0 0 1px rgba(0, 229, 255, 0.08);
 }
 
 .button {
@@ -235,7 +346,7 @@ textarea {
   justify-content: center;
   min-height: 3rem;
   padding: 0.8rem 1.3rem;
-  border-radius: 0.45rem;
+  border-radius: 999px;
   border: 1px solid transparent;
   font-weight: 700;
   transition:
@@ -259,7 +370,7 @@ textarea {
 .button-ghost,
 .button-outline {
   border-color: rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(255, 255, 255, 0.015);
   color: var(--foreground);
 }
 
@@ -607,24 +718,30 @@ textarea {
 
 .team-swiper {
   width: 100%;
-  max-width: 1200px;
+  max-width: 1040px;
   margin-left: auto;
   margin-right: auto;
-  padding-top: 1.5rem;
-  padding-bottom: 4rem;
-  overflow: visible;
+  padding-top: 50px;
+  padding-bottom: 80px;
+  overflow: hidden;
 }
 
 .team-slide {
-  width: 250px;
-  height: 460px;
+  width: 320px;
+  height: 450px;
   border-radius: 1.35rem;
   overflow: hidden;
   box-shadow: 0 24px 50px rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s ease;
 }
 
-.team-slide--loop {
-  opacity: 0.96;
+.team-swiper .swiper-slide-prev,
+.team-swiper .swiper-slide-active,
+.team-swiper .swiper-slide-next {
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .team-card {
@@ -1072,8 +1189,34 @@ textarea {
   color: rgba(224, 224, 224, 0.68);
 }
 
-.footer-meta {
-  color: rgba(224, 224, 224, 0.48);
+.footer-socials {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.footer-socials a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.8rem;
+  padding: 0.7rem 1.1rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.02);
+  color: rgba(224, 224, 224, 0.82);
+  transition:
+    transform 0.25s ease,
+    border-color 0.25s ease,
+    color 0.25s ease,
+    background-color 0.25s ease;
+}
+
+.footer-socials a:hover {
+  transform: translateY(-2px);
+  border-color: rgba(0, 229, 255, 0.26);
+  background: rgba(0, 229, 255, 0.06);
+  color: var(--cyan);
 }
 
 [data-reveal] {
@@ -1136,13 +1279,27 @@ textarea {
   .site-nav {
     display: none;
   }
+
+  .site-header {
+    width: min(92vw, 760px);
+  }
 }
 
 @media (max-width: 720px) {
-  .header-row,
   .footer-row {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .site-header {
+    top: 0.75rem;
+    width: calc(100% - 1rem);
+    border-radius: 1.4rem;
+  }
+
+  .header-row {
+    min-height: 4rem;
+    padding: 0.55rem 0.7rem 0.55rem 0.9rem;
   }
 
   .brand-copy {

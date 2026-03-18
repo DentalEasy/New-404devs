@@ -7,6 +7,56 @@ const onScroll = () => {
   header.classList.toggle("is-scrolled", window.scrollY > 16);
 };
 
+const createCursorEffect = () => {
+  if (prefersReducedMotion) return;
+  if (!window.matchMedia("(pointer: fine)").matches) return;
+
+  const glow = document.querySelector(".cursor-glow");
+  const dot = document.querySelector(".cursor-dot");
+
+  if (!glow || !dot) return;
+
+  const state = {
+    currentX: window.innerWidth / 2,
+    currentY: window.innerHeight / 2,
+    targetX: window.innerWidth / 2,
+    targetY: window.innerHeight / 2,
+  };
+
+  const update = () => {
+    state.currentX += (state.targetX - state.currentX) * 0.18;
+    state.currentY += (state.targetY - state.currentY) * 0.18;
+
+    glow.style.transform = `translate3d(${state.currentX}px, ${state.currentY}px, 0)`;
+    dot.style.transform = `translate3d(${state.targetX}px, ${state.targetY}px, 0)`;
+
+    window.requestAnimationFrame(update);
+  };
+
+  window.addEventListener("pointermove", (event) => {
+    state.targetX = event.clientX;
+    state.targetY = event.clientY;
+    document.body.classList.add("cursor-active");
+  }, { passive: true });
+
+  document.querySelectorAll("a, button, input, textarea, [role='button']").forEach((element) => {
+    element.addEventListener("pointerenter", () => {
+      document.body.classList.add("cursor-hover");
+    });
+
+    element.addEventListener("pointerleave", () => {
+      document.body.classList.remove("cursor-hover");
+    });
+  });
+
+  document.addEventListener("pointerleave", () => {
+    document.body.classList.remove("cursor-active");
+    document.body.classList.remove("cursor-hover");
+  });
+
+  window.requestAnimationFrame(update);
+};
+
 const createCanvasBackground = () => {
   if (!canvas || prefersReducedMotion) return;
 
@@ -202,9 +252,10 @@ const createGsapAnimations = () => {
   document.documentElement.classList.add("motion-ready");
 
   gsap.from(".site-header", {
-    y: -24,
+    y: -72,
     opacity: 0,
-    duration: 0.8,
+    delay: 1.3,
+    duration: 0.9,
     ease: "power3.out",
   });
 
@@ -518,14 +569,18 @@ const createTeamSwiper = () => {
     effect: "coverflow",
     grabCursor: false,
     centeredSlides: true,
-    slidesPerView: 5,
+    slidesPerView: "auto",
     loop: true,
     initialSlide: 0,
-    speed: 1100,
+    speed: 800,
     allowTouchMove: false,
     simulateTouch: false,
-    loopAdditionalSlides: 5,
-    loopedSlides: 5,
+    watchSlidesProgress: true,
+    watchSlidesVisibility: true,
+    observer: true,
+    observeParents: true,
+    loopAdditionalSlides: 4,
+    loopedSlides: 4,
     coverflowEffect: {
       rotate: 40,
       stretch: 0,
@@ -535,31 +590,47 @@ const createTeamSwiper = () => {
     },
     autoplay: {
       delay: 3000,
+      reverseDirection: true,
       disableOnInteraction: false,
       pauseOnMouseEnter: false,
+      stopOnLastSlide: false,
     },
     pagination: {
       el: ".team-swiper-pagination",
       clickable: true,
     },
+    on: {
+      init(swiper) {
+        swiper.slideToLoop(0, 0, false);
+        swiper.update();
+        swiper.updateSlidesClasses();
+
+        window.requestAnimationFrame(() => {
+          swiper.update();
+          swiper.updateSlidesClasses();
+        });
+      },
+      imagesReady(swiper) {
+        swiper.update();
+        swiper.updateSlidesClasses();
+      },
+    },
     breakpoints: {
       0: {
-        slidesPerView: 1.2,
+        slidesPerView: 1.1,
       },
       640: {
-        slidesPerView: 2.2,
+        slidesPerView: 1.4,
       },
       960: {
-        slidesPerView: 3.2,
-      },
-      1280: {
-        slidesPerView: 5,
+        slidesPerView: "auto",
       },
     },
   });
 };
 
 createCanvasBackground();
+createCursorEffect();
 createGsapAnimations();
 createCardHoverEffects();
 createTeamSwiper();
