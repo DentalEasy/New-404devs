@@ -38,10 +38,6 @@
               <span class="brand-badge__line"></span>
               <span class="brand-badge__bottom">DEVS</span>
             </span>
-            <span class="brand-copy">
-              <span class="brand-name">404Devs</span>
-              <span class="brand-sub">Sites & Apps</span>
-            </span>
           </a>
 
           <nav class="site-nav" aria-label="Principal">
@@ -55,6 +51,29 @@
         </div>
       </header>
 
+      <aside class="floating-sidebar" aria-label="Navegacao por secoes">
+        <a href="#servicos" data-section-link="servicos">
+          <span class="floating-sidebar__dot" aria-hidden="true"></span>
+          <span class="floating-sidebar__label">Servicos</span>
+        </a>
+        <a href="#processo" data-section-link="processo">
+          <span class="floating-sidebar__dot" aria-hidden="true"></span>
+          <span class="floating-sidebar__label">Processo</span>
+        </a>
+        <a href="#tecnologias" data-section-link="tecnologias">
+          <span class="floating-sidebar__dot" aria-hidden="true"></span>
+          <span class="floating-sidebar__label">Tecnologias</span>
+        </a>
+        <a href="#time" data-section-link="time">
+          <span class="floating-sidebar__dot" aria-hidden="true"></span>
+          <span class="floating-sidebar__label">Time</span>
+        </a>
+        <a href="#contato" data-section-link="contato">
+          <span class="floating-sidebar__dot" aria-hidden="true"></span>
+          <span class="floating-sidebar__label">Contato</span>
+        </a>
+      </aside>
+
       <main id="top">
         <section class="intro-video-section">
           <div class="intro-video-sticky" aria-hidden="true">
@@ -62,15 +81,24 @@
               class="intro-video"
               autoplay
               muted
-              loop
               playsinline
               preload="auto"
             >
+              <source src="./assets/hero_backgroundmobile.mp4" type="video/mp4" media="(max-width: 720px)">
               <source src="./assets/hero-background.mp4" type="video/mp4">
             </video>
             <div class="intro-video-overlay"></div>
             <div class="intro-video-vignette"></div>
             <div class="intro-video-copy">
+              <button class="scroll-cue" type="button" aria-label="Arraste para baixo">
+                <span class="scroll-cue__mouse">
+                  <span class="scroll-cue__wheel"></span>
+                </span>
+                <span class="scroll-cue__chevrons">
+                  <span></span>
+                  <span></span>
+                </span>
+              </button>
               <p class="eyebrow">404DEVS EXPERIENCE</p>
               <p class="intro-video-title">Scroll para entrar</p>
             </div>
@@ -89,11 +117,12 @@
               <h1 class="hero-title">
                 404<span>Devs</span>
               </h1>
-              <h2 class="hero-subtitle">Sites & Apps Sob Medida para Sua Empresa</h2>
+              <h2 class="hero-subtitle">Software Sob Medida com Base Tecnica Forte</h2>
               <p class="hero-text">
-                Transforme sua ideia em realidade com a 404Devs. Criamos sites,
-                landing pages e aplicativos personalizados para empresas que
-                querem performance, presenca digital forte e resultados reais.
+                Desenvolvemos sistemas, sites e aplicativos com foco em
+                desempenho, escalabilidade e comunicacao transparente. Atuamos
+                com stack full stack real (C#/.NET, Node.js, React e bancos SQL
+                e NoSQL) para transformar requisitos em produto funcional.
               </p>
 
               <div class="hero-actions">
@@ -103,16 +132,16 @@
 
               <div class="hero-metrics">
                 <article class="metric-card">
-                  <span class="metric-value">Web</span>
-                  <span class="metric-label">Sites e landing pages pensados para converter</span>
+                  <span class="metric-value">Full Stack</span>
+                  <span class="metric-label">Da interface ao back-end com foco no seu objetivo de negocio</span>
                 </article>
                 <article class="metric-card">
-                  <span class="metric-value">Apps</span>
-                  <span class="metric-label">Aplicativos mobile e web feitos para escalar</span>
+                  <span class="metric-value">Back-end</span>
+                  <span class="metric-label">APIs robustas, regras de negocio claras e banco de dados bem estruturado</span>
                 </article>
                 <article class="metric-card">
-                  <span class="metric-value">Strategy</span>
-                  <span class="metric-label">Consultoria tecnica e decisao digital orientada por negocio</span>
+                  <span class="metric-value">Suporte</span>
+                  <span class="metric-label">Atendimento tecnico direto, alinhamento continuo e sem ruido no processo</span>
                 </article>
               </div>
             </div>
@@ -134,39 +163,39 @@
 
                   <div class="display-stack">
                     <div class="stack-line">
-                      <span>React</span>
-                      <span class="tag tag-cyan">Interface moderna</span>
+                      <span>C# / .NET</span>
+                      <span class="tag tag-cyan">Web APIs e servicos</span>
                     </div>
                     <div class="stack-line">
-                      <span>Node.js</span>
-                      <span class="tag tag-magenta">Back-end eficiente</span>
+                      <span>Node.js / TypeScript</span>
+                      <span class="tag tag-magenta">Back-end assincrono</span>
                     </div>
                     <div class="stack-line">
-                      <span>Next.js</span>
-                      <span class="tag tag-matrix">SEO e velocidade</span>
+                      <span>React / React Native</span>
+                      <span class="tag tag-matrix">Web e mobile responsivo</span>
                     </div>
                     <div class="stack-line">
-                      <span>Banco de dados</span>
-                      <span class="tag">Estrutura escalavel</span>
+                      <span>SQL + NoSQL</span>
+                      <span class="tag">PostgreSQL, MySQL, MongoDB e Supabase</span>
                     </div>
                   </div>
 
                   <div class="display-grid">
                     <article>
                       <span class="mini-label">FOCO</span>
-                      <strong>Conversao</strong>
+                      <strong>Escalabilidade</strong>
                     </article>
                     <article>
                       <span class="mini-label">ABORDAGEM</span>
-                      <strong>Personalizada</strong>
+                      <strong>Comunicacao direta</strong>
                     </article>
                     <article>
                       <span class="mini-label">SUPORTE</span>
-                      <strong>Continuo</strong>
+                      <strong>Tecnico e continuo</strong>
                     </article>
                     <article>
                       <span class="mini-label">STACK</span>
-                      <strong>Atual e segura</strong>
+                      <strong>Atual, segura e pratica</strong>
                     </article>
                   </div>
                 </div>
@@ -184,9 +213,10 @@
           <div class="container strip-grid">
             <p class="eyebrow">SOBRE A 404DEVS</p>
             <p class="strip-text">
-              Somos uma equipe especializada em criar experiencias digitais sob
-              medida para empresas que precisam se destacar no ambiente online com
-              design responsivo, usabilidade, estrategia e tecnologia de ponta.
+              Unimos desenvolvimento full stack, suporte tecnico e visao
+              operacional para entregar software sob medida. Nossa equipe atua
+              com levantamento de requisitos, documentacao, arquitetura e
+              acompanhamento direto para garantir entrega alinhada ao cliente.
             </p>
           </div>
         </section>
@@ -206,28 +236,28 @@
             <div class="card-grid services-grid">
               <article class="content-card" data-reveal="up">
                 <p class="card-index">01</p>
-                <h3>Criacao de Sites e Landing Pages</h3>
+                <h3>Sistemas Web e Landing Pages</h3>
                 <p>
-                  Desenvolvemos sites e landing pages com design responsivo,
-                  excelente experiencia de uso e estrutura pensada para conversao.
+                  Criamos interfaces responsivas em React, HTML5 e CSS3 com foco
+                  em usabilidade, clareza e resultado para o seu negocio.
                 </p>
               </article>
 
               <article class="content-card" data-reveal="up" data-delay="80">
                 <p class="card-index">02</p>
-                <h3>Desenvolvimento de Aplicativos</h3>
+                <h3>Back-end, APIs e Integracoes</h3>
                 <p>
-                  Criamos aplicativos mobile e web para resolver demandas reais,
-                  de plataformas objetivas a sistemas complexos e escalaveis.
+                  Desenvolvemos APIs e servicos com C#/.NET e Node.js/TypeScript,
+                  incluindo modelagem de dados SQL e NoSQL para performance real.
                 </p>
               </article>
 
               <article class="content-card" data-reveal="up" data-delay="160">
                 <p class="card-index">03</p>
-                <h3>Consultoria e Estrategia Digital</h3>
+                <h3>Consultoria Tecnica e Suporte</h3>
                 <p>
-                  Orientamos a definicao das melhores tecnologias, arquitetura e
-                  estrategia para aumentar eficiencia e alcance online.
+                  Atuamos no levantamento de requisitos, documentacao e suporte
+                  avancado, mantendo alinhamento constante com quem contrata.
                 </p>
               </article>
             </div>
@@ -250,10 +280,10 @@
               <article class="process-item" data-reveal="left">
                 <span class="process-step">01</span>
                 <div>
-                  <h3>Planejamento</h3>
+                  <h3>Levantamento e Alinhamento</h3>
                   <p>
-                    Iniciamos com a analise do seu projeto, dos objetivos de negocio
-                    e das necessidades especificas da sua empresa.
+                    Mapeamos objetivos, regras de negocio e expectativas para
+                    definir escopo tecnico com comunicacao direta e transparente.
                   </p>
                 </div>
               </article>
@@ -261,10 +291,10 @@
               <article class="process-item" data-reveal="left" data-delay="80">
                 <span class="process-step">02</span>
                 <div>
-                  <h3>Desenvolvimento</h3>
+                  <h3>Arquitetura e Desenvolvimento</h3>
                   <p>
-                    Criamos layouts personalizados, codificamos e integramos os
-                    sistemas para preparar seu produto para o mercado.
+                    Construimos front-end, back-end e banco de dados com stack
+                    adequada ao projeto, priorizando desempenho e manutencao.
                   </p>
                 </div>
               </article>
@@ -272,10 +302,10 @@
               <article class="process-item" data-reveal="left" data-delay="160">
                 <span class="process-step">03</span>
                 <div>
-                  <h3>Lancamento</h3>
+                  <h3>Validacao e Publicacao</h3>
                   <p>
-                    Realizamos testes rigorosos e colocamos a solucao digital no ar
-                    com confianca, consistencia e performance.
+                    Testamos fluxos criticos, ajustamos consultas e publicamos a
+                    solucao com estabilidade e seguranca.
                   </p>
                 </div>
               </article>
@@ -285,8 +315,8 @@
                 <div>
                   <h3>Acompanhamento e Suporte</h3>
                   <p>
-                    Seguimos ao seu lado com acompanhamento pos-lancamento,
-                    manutencao e ajustes continuos para performance ideal.
+                    Continuamos com suporte tecnico, melhorias evolutivas e
+                    monitoramento para manter o sistema eficiente no dia a dia.
                   </p>
                 </div>
               </article>
@@ -303,37 +333,38 @@
           <div class="container">
             <div class="section-heading" data-reveal="up">
               <p class="eyebrow">TECNOLOGIAS UTILIZADAS</p>
-              <h2>Stack atual para performance, escalabilidade e seguranca.</h2>
+              <h2>Stack coerente com projetos reais de web, dados e suporte.</h2>
             </div>
 
             <div class="tech-layout">
               <div class="tech-summary" data-reveal="up">
                 <p>
-                  Utilizamos ferramentas consolidadas para acelerar entregas,
-                  melhorar manutencao e sustentar crescimento sem perder qualidade.
+                  Trabalhamos com linguagens e ferramentas consolidadas para
+                  construir software robusto, documentado e alinhado ao contexto
+                  operacional de cada cliente.
                 </p>
               </div>
 
               <div class="tech-grid">
                 <article class="tech-card" data-reveal="up">
-                  <span class="tech-name">React</span>
-                  <p>Interfaces modernas, interativas e com excelente experiencia de uso.</p>
+                  <span class="tech-name">C# e .NET</span>
+                  <p>Web APIs, servicos em background e base solida para sistemas escalaveis.</p>
                 </article>
                 <article class="tech-card" data-reveal="up" data-delay="60">
-                  <span class="tech-name">Node.js</span>
-                  <p>Back-end rapido e eficiente para APIs, automacoes e regras de negocio.</p>
+                  <span class="tech-name">Node.js e TypeScript</span>
+                  <p>Servicos assincronos com tipagem segura para reduzir erro em producao.</p>
                 </article>
                 <article class="tech-card" data-reveal="up" data-delay="120">
-                  <span class="tech-name">Next.js</span>
-                  <p>Aplicacoes web rapidas, robustas e preparadas para SEO.</p>
+                  <span class="tech-name">React e React Native</span>
+                  <p>Interfaces modernas para web e mobile com foco em usabilidade e consistencia.</p>
                 </article>
                 <article class="tech-card" data-reveal="up" data-delay="180">
-                  <span class="tech-name">Tailwind CSS</span>
-                  <p>Design clean, responsivo e consistente em todas as telas.</p>
+                  <span class="tech-name">SQL e NoSQL</span>
+                  <p>Modelagem em PostgreSQL, MySQL, MongoDB e Supabase conforme necessidade.</p>
                 </article>
                 <article class="tech-card" data-reveal="up" data-delay="240">
-                  <span class="tech-name">Banco de dados</span>
-                  <p>Estrutura segura e escalavel para armazenar dados, integrar APIs e sustentar o crescimento do produto.</p>
+                  <span class="tech-name">Git, GitHub e Ferramentas</span>
+                  <p>Versionamento, colaboracao e fluxo tecnico com VS Code, Visual Studio, Figma e Expo.</p>
                 </article>
               </div>
             </div>
@@ -424,7 +455,7 @@
                     <div class="team-card__footer">
                       <div class="team-card__identity">
                         <h3>Guilherme Henrique de Oliveira</h3>
-                        <p>UX, produto e front-end</p>
+                        <p>Full stack & QA</p>
                       </div>
                       <div class="team-card__actions">
                         <a class="team-social" href="https://linkedin.com/in/guilherme--henrique" target="_blank" rel="noreferrer" aria-label="LinkedIn de Guilherme Henrique de Oliveira">
@@ -473,14 +504,14 @@
                 <div class="swiper-slide team-slide">
                   <article class="team-card">
                     <img
-                      src="./assets/Wendell.jpeg"
+                      src="./assets/wendell.jpeg"
                       alt="Foto de Wendell"
                     >
                     <div class="team-card__overlay"></div>
                     <div class="team-card__footer">
                       <div class="team-card__identity">
                         <h3>Wendell Nascimento</h3>
-                        <p>Apps, full-stack e QA</p>
+                        <p>Back-end & ciberseguranca</p>
                       </div>
                       <div class="team-card__actions">
                         <a class="team-social" href="https://www.linkedin.com/in/wendell-nascimento-0923a8244?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" target="_blank" rel="noreferrer" aria-label="LinkedIn de Wendell Nascimento">
@@ -519,18 +550,18 @@
 
             <div class="card-grid reasons-grid">
               <article class="content-card accent-magenta" data-reveal="up">
-                <h3>Solucoes Personalizadas</h3>
-                <p>Cada projeto e unico, por isso criamos experiencias realmente sob medida.</p>
+                <h3>Comunicacao Sem Ruido</h3>
+                <p>Alinhamento direto com o cliente, do briefing inicial ate a entrega final.</p>
               </article>
 
               <article class="content-card accent-cyan" data-reveal="up" data-delay="70">
-                <h3>Tecnologia de Ponta</h3>
-                <p>Usamos ferramentas modernas para manter sua plataforma atual, rapida e performatica.</p>
+                <h3>Arquitetura Escalavel</h3>
+                <p>Back-end estruturado, APIs consistentes e banco otimizado para crescimento sustentavel.</p>
               </article>
 
               <article class="content-card accent-matrix" data-reveal="up" data-delay="140">
-                <h3>Acompanhamento Continuo</h3>
-                <p>Atuamos antes, durante e depois do lancamento para sustentar resultados consistentes.</p>
+                <h3>Suporte Operacional e Tecnico</h3>
+                <p>Experiencia em atendimento e suporte avancado para resolver problemas reais com agilidade.</p>
               </article>
             </div>
           </div>
@@ -546,8 +577,8 @@
             <p class="eyebrow">ENTRE EM CONTATO</p>
             <h2>Pronto para transformar seu projeto digital?</h2>
             <p>
-              Agende uma consultoria gratuita e descubra como a 404Devs pode criar
-              uma solucao sob medida para o momento da sua empresa.
+              Agende uma conversa e receba uma proposta tecnica clara, com stack,
+              escopo e prioridades definidos para o seu momento de negocio.
             </p>
 
             <div class="hero-actions">
@@ -563,6 +594,7 @@
           <div>
             <p class="footer-brand">404Devs</p>
             <p class="footer-copy">Sites, landing pages e aplicativos sob medida para empresas.</p>
+            <p class="footer-copy">© 2026 404Devs. Todos os direitos reservados. Este site e propriedade da 404Devs.</p>
           </div>
 
           <div class="footer-socials">
