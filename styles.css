@@ -1989,11 +1989,16 @@ textarea {
   }
 
   .hero-title {
-    min-height: clamp(4.8rem, 22vw, 7.2rem);
+    min-height: unset;
+    display: flex;
+    flex-direction: column;
+    line-height: 0.92;
   }
 
   .hero-title__back {
-    display: none;
+    position: static;
+    transform: none;
+    display: block;
   }
 
   .hero-subtitle,
