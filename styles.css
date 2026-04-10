@@ -871,7 +871,8 @@ textarea {
 .panel-frame {
   padding: 1rem;
   overflow: hidden;
-  animation: panelGlitch 2.5s linear infinite;
+  will-change: transform;
+  animation: panelGlitch 6s linear infinite;
 }
 
 /* Glitch: colored displacement strips */
@@ -883,136 +884,97 @@ textarea {
   pointer-events: none;
   z-index: 10;
   opacity: 0;
-  animation: panelGlitchChrome 2.5s linear infinite;
+  animation: panelGlitchChrome 6s linear infinite;
 }
 
-/* ─── GLITCH: main panel distortion (2.5s cycle) ─── */
+/* ─── GLITCH: main panel distortion (6s cycle) ─── */
 @keyframes panelGlitch {
-  /* Rest period: 0 → 55% (0–1.375s) */
-  0%, 53%, 100% {
-    transform: translate(0, 0) skewX(0deg);
+  /* Rest: 0–63%, 100% */
+  0%, 63%, 100% {
+    transform: translate(0) skewX(0);
     filter: none;
     border-color: rgba(255, 255, 255, 0.08);
     box-shadow: var(--shadow);
   }
-
-  /* Burst 1 — hard hit: 55–68% (1.375–1.7s) */
-  55% {
-    transform: translate(-6px, 1px) skewX(-1.5deg);
-    filter: hue-rotate(30deg) saturate(2) brightness(1.18);
+  /* Burst — 64–70% (3.84–4.2s) */
+  64% {
+    transform: translate(-5px, 1px) skewX(-1.2deg);
+    filter: hue-rotate(25deg) saturate(1.8);
+    border-color: rgba(0, 229, 255, 0.5);
+    box-shadow:
+      var(--shadow),
+      -7px 0 0 rgba(255, 0, 100, 0.4),
+      7px 0 0 rgba(0, 229, 255, 0.4);
+  }
+  65.5% {
+    transform: translate(6px, -2px) skewX(1.5deg);
+    filter: hue-rotate(-20deg) saturate(2);
+    border-color: rgba(255, 50, 80, 0.45);
+    box-shadow:
+      var(--shadow),
+      8px 0 0 rgba(0, 229, 255, 0.45),
+      -4px 0 0 rgba(255, 100, 0, 0.35);
+  }
+  67% {
+    transform: translate(-3px, 2px) skewX(0.6deg);
+    filter: saturate(2) brightness(1.12);
     border-color: rgba(0, 229, 255, 0.55);
-    box-shadow:
-      var(--shadow),
-      -8px 0 0 rgba(255, 0, 100, 0.45),
-      8px 0 0 rgba(0, 229, 255, 0.45);
+    box-shadow: var(--shadow), 0 0 24px rgba(0, 229, 255, 0.22);
   }
-  57% {
-    transform: translate(7px, -2px) skewX(2deg);
-    filter: hue-rotate(-25deg) saturate(2.2) brightness(1.22);
-    border-color: rgba(255, 50, 80, 0.5);
-    box-shadow:
-      var(--shadow),
-      10px 0 0 rgba(0, 229, 255, 0.5),
-      -5px 0 0 rgba(255, 100, 0, 0.4);
-  }
-  59% {
-    transform: translate(-4px, 3px) skewX(1deg);
-    filter: hue-rotate(15deg) saturate(1.6);
-    border-color: rgba(0, 255, 65, 0.4);
-    box-shadow:
-      var(--shadow),
-      -6px 0 0 rgba(255, 184, 0, 0.35),
-      4px 0 0 rgba(0, 229, 255, 0.3);
-  }
-  61% {
-    transform: translate(5px, 0px) skewX(-0.8deg);
-    filter: saturate(2.5) brightness(1.25);
-    border-color: rgba(0, 229, 255, 0.7);
-    box-shadow:
-      var(--shadow),
-      0 0 28px rgba(0, 229, 255, 0.3);
-  }
-  63% {
-    transform: translate(-3px, -2px) skewX(0.5deg);
-    filter: hue-rotate(8deg) saturate(1.3);
-  }
-  65% {
-    transform: translate(4px, 1px) skewX(-0.4deg);
-    filter: saturate(1.1);
-    border-color: rgba(255, 255, 255, 0.2);
-    box-shadow: var(--shadow);
-  }
-  68% {
-    transform: translate(0, 0) skewX(0);
+  68.5% {
+    transform: translate(3px, 0);
     filter: none;
-    border-color: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.14);
     box-shadow: var(--shadow);
   }
-
-  /* Burst 2 — aftershock: 76–80% (1.9–2.0s) */
+  70% {
+    transform: translate(0);
+    border-color: rgba(255, 255, 255, 0.08);
+  }
+  /* Aftershock — 76–79% */
   76% {
-    transform: translate(3px, -1px) skewX(0.6deg);
-    filter: saturate(1.4) brightness(1.06);
-    border-color: rgba(0, 229, 255, 0.22);
-    box-shadow:
-      var(--shadow),
-      4px 0 0 rgba(0, 229, 255, 0.25),
-      -3px 0 0 rgba(255, 0, 80, 0.2);
+    transform: translate(2px, -1px);
+    filter: saturate(1.2);
+    border-color: rgba(0, 229, 255, 0.16);
   }
   78% {
-    transform: translate(-3px, 0);
+    transform: translate(-1px, 0);
     filter: none;
     border-color: rgba(255, 255, 255, 0.08);
-    box-shadow: var(--shadow);
   }
-  80% {
-    transform: translate(0, 0);
-    border-color: rgba(255, 255, 255, 0.08);
-  }
+  79% { transform: translate(0); }
 }
 
-/* ─── GLITCH: chromatic strip overlay (2.5s cycle) ─── */
+/* ─── GLITCH: chromatic strip overlay (6s cycle) ─── */
 @keyframes panelGlitchChrome {
-  0%, 53%, 70%, 100% { opacity: 0; }
-
-  55% {
+  0%, 63%, 71%, 100% { opacity: 0; }
+  64% {
     opacity: 1;
     clip-path: inset(18% 0 68% 0);
-    transform: translateX(-12px);
-    background: rgba(0, 229, 255, 0.18);
+    transform: translateX(-10px);
+    background: rgba(0, 229, 255, 0.16);
   }
-  57% {
-    clip-path: inset(62% 0 22% 0);
-    transform: translateX(10px);
-    background: rgba(255, 30, 80, 0.18);
+  65.5% {
+    clip-path: inset(58% 0 24% 0);
+    transform: translateX(8px);
+    background: rgba(255, 30, 80, 0.16);
   }
-  59% {
-    clip-path: inset(38% 0 45% 0);
-    transform: translateX(-8px);
-    background: rgba(255, 184, 0, 0.14);
-  }
-  61% {
-    clip-path: inset(75% 0 8% 0);
-    transform: translateX(14px);
-    background: rgba(0, 229, 255, 0.22);
-  }
-  63% {
-    clip-path: inset(5% 0 88% 0);
+  67% {
+    clip-path: inset(35% 0 48% 0);
     transform: translateX(-6px);
-    background: rgba(255, 0, 100, 0.16);
+    background: rgba(255, 184, 0, 0.12);
   }
-  66% {
-    opacity: 0.4;
-    clip-path: inset(0 0 95% 0);
-    transform: translateX(4px);
+  68.5% {
+    opacity: 0.5;
+    clip-path: inset(0 0 92% 0);
+    transform: translateX(5px);
   }
-  68% { opacity: 0; }
-
+  70% { opacity: 0; }
   76% {
-    opacity: 0.8;
+    opacity: 0.6;
     clip-path: inset(45% 0 40% 0);
-    transform: translateX(-6px);
-    background: rgba(0, 229, 255, 0.13);
+    transform: translateX(-4px);
+    background: rgba(0, 229, 255, 0.11);
   }
   78% { opacity: 0; }
 }
@@ -1063,29 +1025,29 @@ textarea {
 .signal:nth-child(1) {
   background: var(--magenta);
   box-shadow: 0 0 5px rgba(255, 184, 0, 0.6);
-  animation: signalGlitch 2.5s linear infinite;
+  animation: signalGlitch 6s linear infinite;
 }
 
 .signal:nth-child(2) {
   background: var(--cyan);
   box-shadow: 0 0 5px rgba(0, 229, 255, 0.6);
-  animation: signalGlitch 2.5s linear infinite 0.35s;
+  animation: signalGlitch 6s linear infinite 0.35s;
 }
 
 .signal:nth-child(3) {
   background: var(--matrix);
   box-shadow: 0 0 5px rgba(0, 255, 65, 0.6);
-  animation: signalGlitch 2.5s linear infinite 0.7s;
+  animation: signalGlitch 6s linear infinite 0.7s;
 }
 
 @keyframes signalGlitch {
-  0%, 53%, 70%, 100% { opacity: 1; transform: scale(1); }
-  55%   { opacity: 0;    transform: scale(0.5) translateX(-3px); }
-  57%   { opacity: 1;    transform: scale(1.3) translateX(2px); }
-  59%   { opacity: 0.3;  transform: scale(0.8); }
-  61%   { opacity: 1;    transform: scale(1); }
-  63%   { opacity: 0;    transform: scale(1.1) translateX(-1px); }
-  65%   { opacity: 1;    transform: scale(1); }
+  0%, 63%, 71%, 100% { opacity: 1; transform: scale(1); }
+  64%   { opacity: 0;   transform: scale(0.5) translateX(-3px); }
+  65.5% { opacity: 1;   transform: scale(1.2) translateX(2px); }
+  67%   { opacity: 0.3; transform: scale(0.85); }
+  68.5% { opacity: 1;   transform: scale(1); }
+  70%   { opacity: 0;   transform: scale(1.1); }
+  71%   { opacity: 1;   transform: scale(1); }
 }
 
 .panel-display {

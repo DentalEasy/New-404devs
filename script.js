@@ -953,7 +953,7 @@ const createGlitchParticles = () => {
   const panelFrame = document.querySelector(".hero-panel .panel-frame");
   if (!panelFrame) return;
 
-  /* ── Fixed canvas — covers the whole viewport, bypasses all clipping ── */
+  /* Fixed canvas — covers viewport, bypasses all clipping */
   const cvs = document.createElement("canvas");
   cvs.setAttribute("aria-hidden", "true");
   cvs.style.cssText =
@@ -962,105 +962,76 @@ const createGlitchParticles = () => {
 
   const ctx = cvs.getContext("2d");
   let particles = [];
+  let rafId     = null;   // null = loop stopped (idle)
 
   const WORDS  = ["404", "ERRO", "NULL", "ERR!", "BUG", "0x0", "FAIL", "???"];
   const COLORS = [
-    [0, 229, 255],    // cyan
-    [255, 184, 0],    // gold
-    [0, 255, 65],     // matrix green
-    [255, 50, 100],   // red
-    [255, 255, 255],  // white
+    [0, 229, 255],   // cyan
+    [255, 184, 0],   // gold
+    [0, 255, 65],    // matrix green
+    [255, 50, 100],  // red
+    [255, 255, 255], // white
   ];
 
-  /* Resize canvas to match the actual viewport */
   const resize = () => {
     cvs.width  = window.innerWidth;
     cvs.height = window.innerHeight;
   };
 
-  /* Check if the panel is currently visible in the viewport */
   const isPanelVisible = () => {
     const r = panelFrame.getBoundingClientRect();
     return r.bottom > 0 && r.top < window.innerHeight;
   };
 
-  /*
-   * Particles spawn along the 4 edges of panel-frame.
-   * getBoundingClientRect() is viewport-relative → matches fixed canvas coords.
-   */
-  const spawnBurst = (minCount = 8, maxCount = 14) => {
+  const spawnBurst = (minCount = 4, maxCount = 7) => {
     if (!isPanelVisible()) return;
 
-    const fr = panelFrame.getBoundingClientRect();  // viewport-relative
-    const ox = fr.left;
-    const oy = fr.top;
-    const fw = fr.width;
-    const fh = fr.height;
-
+    const fr = panelFrame.getBoundingClientRect();
+    const ox = fr.left, oy = fr.top, fw = fr.width, fh = fr.height;
     const count = minCount + Math.floor(Math.random() * (maxCount - minCount + 1));
 
     for (let i = 0; i < count; i++) {
       const word  = WORDS[Math.floor(Math.random() * WORDS.length)];
       const color = COLORS[Math.floor(Math.random() * COLORS.length)];
-      const size  = 10 + Math.random() * 14;
-
-      /* Pick a random edge: 0=top 1=right 2=bottom 3=left */
-      const edge = Math.floor(Math.random() * 4);
+      const size  = 10 + Math.random() * 12;
+      const edge  = Math.floor(Math.random() * 4);
       let spawnX, spawnY, baseAngle;
 
       switch (edge) {
-        case 0: /* top */
-          spawnX    = ox + Math.random() * fw;
-          spawnY    = oy;
-          baseAngle = -Math.PI / 2;   /* upward */
-          break;
-        case 1: /* right */
-          spawnX    = ox + fw;
-          spawnY    = oy + Math.random() * fh;
-          baseAngle = 0;              /* rightward */
-          break;
-        case 2: /* bottom */
-          spawnX    = ox + Math.random() * fw;
-          spawnY    = oy + fh;
-          baseAngle = Math.PI / 2;    /* downward */
-          break;
-        default: /* left */
-          spawnX    = ox;
-          spawnY    = oy + Math.random() * fh;
-          baseAngle = Math.PI;        /* leftward */
-          break;
+        case 0: spawnX = ox + Math.random() * fw; spawnY = oy;      baseAngle = -Math.PI / 2; break;
+        case 1: spawnX = ox + fw; spawnY = oy + Math.random() * fh; baseAngle = 0;             break;
+        case 2: spawnX = ox + Math.random() * fw; spawnY = oy + fh;  baseAngle = Math.PI / 2;  break;
+        default:spawnX = ox;      spawnY = oy + Math.random() * fh; baseAngle = Math.PI;       break;
       }
 
-      /* ±55° spread around perpendicular */
-      const spread = (Math.random() - 0.5) * (Math.PI * 110 / 180);
-      const angle  = baseAngle + spread;
-      const speed  = 2.0 + Math.random() * 4.0;
+      const angle = baseAngle + (Math.random() - 0.5) * (Math.PI * 110 / 180);
+      const speed = 2.0 + Math.random() * 3.5;
 
       particles.push({
-        x:     spawnX,
-        y:     spawnY,
-        vx:    Math.cos(angle) * speed,
-        vy:    Math.sin(angle) * speed,
+        x: spawnX, y: spawnY,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
         word, color, size,
         life:  1.0,
-        decay: 0.026 + Math.random() * 0.024,
-        rot:   (Math.random() - 0.5) * 0.7,
-        rotV:  (Math.random() - 0.5) * 0.07,
-        skew:  (Math.random() - 0.5) * 0.32,
-        ca:    Math.random() > 0.45,
+        decay: 0.03 + Math.random() * 0.025,
+        rot:   (Math.random() - 0.5) * 0.6,
+        rotV:  (Math.random() - 0.5) * 0.06,
+        skew:  (Math.random() - 0.5) * 0.28,
       });
     }
+
+    startLoop(); // wake up rAF only when we have particles
   };
 
-  /* Render loop */
-  const tick = () => {
+  /* Render loop — self-stops when particles array empties */
+  const loop = () => {
     ctx.clearRect(0, 0, cvs.width, cvs.height);
 
     for (let i = particles.length - 1; i >= 0; i--) {
       const p = particles[i];
       p.x   += p.vx;
       p.y   += p.vy;
-      p.vy  += 0.05;        // gravity
+      p.vy  += 0.05;
       p.life -= p.decay;
       p.rot  += p.rotV;
 
@@ -1077,44 +1048,37 @@ const createGlitchParticles = () => {
       ctx.font         = `bold ${p.size}px "IBM Plex Mono", monospace`;
       ctx.textAlign    = "center";
       ctx.textBaseline = "middle";
-
-      ctx.shadowBlur  = 14;
-      ctx.shadowColor = `rgba(${r},${g},${b},${(a * 0.7).toFixed(2)})`;
-      ctx.fillStyle   = `rgba(${r},${g},${b},${a.toFixed(2)})`;
+      /* No shadowBlur — big GPU win */
+      ctx.fillStyle = `rgba(${r},${g},${b},${a.toFixed(2)})`;
       ctx.fillText(p.word, 0, 0);
-
-      if (p.ca && a > 0.25) {
-        ctx.shadowBlur = 0;
-        ctx.fillStyle  = `rgba(${r},${g},${b},${(a * 0.28).toFixed(2)})`;
-        ctx.fillText(p.word, 3, -1);
-      }
-
       ctx.restore();
     }
 
-    requestAnimationFrame(tick);
+    if (particles.length > 0) {
+      rafId = requestAnimationFrame(loop);
+    } else {
+      rafId = null; // stop — no canvas work until next burst
+    }
   };
 
-  /* Sync with CSS: 2.5 s cycle, glitch at 55 % ≈ 1375 ms */
-  const CYCLE  = 2500;
-  const OFFSET = 1375;
-
-  const fireCycle = () => {
-    spawnBurst(8, 14);
-    setTimeout(() => spawnBurst(4, 7), 530);
+  const startLoop = () => {
+    if (rafId === null) rafId = requestAnimationFrame(loop);
   };
+
+  /* Sync with CSS: 6s cycle, burst at 64% = 3840ms */
+  const CYCLE  = 6000;
+  const OFFSET = 3840;
 
   const syncAndStart = () => {
     const delay = (OFFSET - (Date.now() % CYCLE) + CYCLE) % CYCLE;
     setTimeout(() => {
-      fireCycle();
-      setInterval(fireCycle, CYCLE);
+      spawnBurst();
+      setInterval(spawnBurst, CYCLE);
     }, delay);
   };
 
   resize();
   window.addEventListener("resize", resize, { passive: true });
-  tick();
   syncAndStart();
 };
 
