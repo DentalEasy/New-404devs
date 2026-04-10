@@ -206,16 +206,13 @@ textarea {
     opacity 0.3s ease,
     transform 0.3s ease,
     visibility 0s linear 0.3s;
-  backdrop-filter: blur(14px) saturate(1.15);
-  background:
-    linear-gradient(135deg, rgba(255, 184, 0, 0.05), rgba(0, 229, 255, 0.04) 45%, rgba(0, 255, 65, 0.035)),
-    rgba(6, 6, 6, 0.34);
+  /* No backdrop-filter: very expensive on mobile */
+  background: rgba(6, 6, 6, 0.82);
   border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 999px;
   box-shadow:
-    0 14px 34px rgba(0, 0, 0, 0.16),
-    0 0 0 1px rgba(255, 255, 255, 0.02),
-    inset 0 1px 0 rgba(255, 255, 255, 0.035);
+    0 14px 34px rgba(0, 0, 0, 0.28),
+    0 0 0 1px rgba(255, 255, 255, 0.02);
 }
 
 .site-header.is-visible {
@@ -796,8 +793,7 @@ textarea {
     border-color 0.3s ease,
     box-shadow 0.3s ease,
     background-color 0.3s ease;
-  transform-style: preserve-3d;
-  will-change: transform;
+  /* will-change only added on hover via JS */
 }
 
 .metric-card::after,
@@ -889,44 +885,29 @@ textarea {
 }
 
 /* ─── GLITCH: main panel distortion (6s cycle) ─── */
+/* Only transform + border-color: compositor-only, zero repaint */
 @keyframes panelGlitch {
   /* Rest: 0–63%, 100% */
   0%, 63%, 100% {
     transform: translate(0) skewX(0);
-    filter: none;
     border-color: rgba(255, 255, 255, 0.08);
-    box-shadow: var(--shadow);
   }
   /* Burst — 64–70% (3.84–4.2s) */
   64% {
     transform: translate(-5px, 1px) skewX(-1.2deg);
-    filter: hue-rotate(25deg) saturate(1.8);
     border-color: rgba(0, 229, 255, 0.5);
-    box-shadow:
-      var(--shadow),
-      -7px 0 0 rgba(255, 0, 100, 0.4),
-      7px 0 0 rgba(0, 229, 255, 0.4);
   }
   65.5% {
     transform: translate(6px, -2px) skewX(1.5deg);
-    filter: hue-rotate(-20deg) saturate(2);
     border-color: rgba(255, 50, 80, 0.45);
-    box-shadow:
-      var(--shadow),
-      8px 0 0 rgba(0, 229, 255, 0.45),
-      -4px 0 0 rgba(255, 100, 0, 0.35);
   }
   67% {
     transform: translate(-3px, 2px) skewX(0.6deg);
-    filter: saturate(2) brightness(1.12);
     border-color: rgba(0, 229, 255, 0.55);
-    box-shadow: var(--shadow), 0 0 24px rgba(0, 229, 255, 0.22);
   }
   68.5% {
     transform: translate(3px, 0);
-    filter: none;
     border-color: rgba(255, 255, 255, 0.14);
-    box-shadow: var(--shadow);
   }
   70% {
     transform: translate(0);
@@ -935,12 +916,10 @@ textarea {
   /* Aftershock — 76–79% */
   76% {
     transform: translate(2px, -1px);
-    filter: saturate(1.2);
     border-color: rgba(0, 229, 255, 0.16);
   }
   78% {
     transform: translate(-1px, 0);
-    filter: none;
     border-color: rgba(255, 255, 255, 0.08);
   }
   79% { transform: translate(0); }
@@ -1875,6 +1854,23 @@ textarea {
 }
 
 @media (max-width: 1080px) {
+  /* Disable expensive CSS animations on mobile/tablet */
+  .panel-frame {
+    animation: none;
+    will-change: auto;
+  }
+
+  .panel-frame::after {
+    animation: none;
+    display: none;
+  }
+
+  .signal:nth-child(1),
+  .signal:nth-child(2),
+  .signal:nth-child(3) {
+    animation: none;
+  }
+
   .floating-sidebar {
     right: 0.55rem;
     padding: 0.42rem;
