@@ -2345,6 +2345,10 @@ textarea {
 
 /* ── ≤ 1080px: panel in single-column mode ── */
 @media (max-width: 1080px) {
+  .showcase-scissors {
+    display: none;
+  }
+
   .hero-panel {
     width: 100%;
     max-width: 680px;
