@@ -44,6 +44,7 @@
             <a href="#servicos">Serviços</a>
             <a href="#processo">Processo</a>
             <a href="#tecnologias">Tecnologias</a>
+            <a href="#agendar">Agendar call</a>
             <a href="#contato">Contato</a>
           </nav>
 
@@ -51,10 +52,10 @@
         </div>
       </header>
 
-      <aside class="floating-sidebar" aria-label="Navegacao por secoes">
+      <aside class="floating-sidebar" aria-label="Navegação por seções">
         <a href="#servicos" data-section-link="servicos">
           <span class="floating-sidebar__dot" aria-hidden="true"></span>
-          <span class="floating-sidebar__label">Servicos</span>
+          <span class="floating-sidebar__label">Serviços</span>
         </a>
         <a href="#processo" data-section-link="processo">
           <span class="floating-sidebar__dot" aria-hidden="true"></span>
@@ -67,6 +68,10 @@
         <a href="#time" data-section-link="time">
           <span class="floating-sidebar__dot" aria-hidden="true"></span>
           <span class="floating-sidebar__label">Time</span>
+        </a>
+        <a href="#agendar" data-section-link="agendar">
+          <span class="floating-sidebar__dot" aria-hidden="true"></span>
+          <span class="floating-sidebar__label">Call</span>
         </a>
         <a href="#contato" data-section-link="contato">
           <span class="floating-sidebar__dot" aria-hidden="true"></span>
@@ -113,35 +118,36 @@
         <section class="hero-section">
           <div class="container hero-grid">
             <div class="hero-copy">
-              <p class="eyebrow">SOLUCOES DIGITAIS SOB MEDIDA</p>
-              <h1 class="hero-title">
-                404<span>Devs</span>
+              <p class="eyebrow">SOLUÇÕES DIGITAIS SOB MEDIDA</p>
+              <h1 class="hero-title" aria-label="404 Devs">
+                <span class="hero-title__front">404</span>
+                <span class="hero-title__back" aria-hidden="true">DEVS</span>
               </h1>
-              <h2 class="hero-subtitle">Software Sob Medida com Base Tecnica Forte</h2>
+              <h2 class="hero-subtitle">Software Sob Medida com Base Técnica Forte</h2>
               <p class="hero-text">
                 Desenvolvemos sistemas, sites e aplicativos com foco em
-                desempenho, escalabilidade e comunicacao transparente. Atuamos
+                desempenho, escalabilidade e comunicação transparente. Atuamos
                 com stack full stack real (C#/.NET, Node.js, React e bancos SQL
                 e NoSQL) para transformar requisitos em produto funcional.
               </p>
 
               <div class="hero-actions">
                 <a class="button button-primary" href="#contato">Falar com a 404Devs</a>
-                <a class="button button-ghost" href="#servicos">Explorar servicos</a>
+                <a class="button button-ghost" href="#servicos">Explorar serviços</a>
               </div>
 
               <div class="hero-metrics">
                 <article class="metric-card">
                   <span class="metric-value">Full Stack</span>
-                  <span class="metric-label">Da interface ao back-end com foco no seu objetivo de negocio</span>
+                  <span class="metric-label">Da interface ao back-end com foco no seu objetivo de negócio</span>
                 </article>
                 <article class="metric-card">
                   <span class="metric-value">Back-end</span>
-                  <span class="metric-label">APIs robustas, regras de negocio claras e banco de dados bem estruturado</span>
+                  <span class="metric-label">APIs robustas, regras de negócio claras e banco de dados bem estruturado</span>
                 </article>
                 <article class="metric-card">
                   <span class="metric-value">Suporte</span>
-                  <span class="metric-label">Atendimento tecnico direto, alinhamento continuo e sem ruido no processo</span>
+                  <span class="metric-label">Atendimento técnico direto, alinhamento contínuo e sem ruído no processo</span>
                 </article>
               </div>
             </div>
@@ -164,11 +170,11 @@
                   <div class="display-stack">
                     <div class="stack-line">
                       <span>C# / .NET</span>
-                      <span class="tag tag-cyan">Web APIs e servicos</span>
+                      <span class="tag tag-cyan">Web APIs e serviços</span>
                     </div>
                     <div class="stack-line">
                       <span>Node.js / TypeScript</span>
-                      <span class="tag tag-magenta">Back-end assincrono</span>
+                      <span class="tag tag-magenta">Back-end assíncrono</span>
                     </div>
                     <div class="stack-line">
                       <span>React / React Native</span>
@@ -187,11 +193,11 @@
                     </article>
                     <article>
                       <span class="mini-label">ABORDAGEM</span>
-                      <strong>Comunicacao direta</strong>
+                      <strong>Comunicação direta</strong>
                     </article>
                     <article>
                       <span class="mini-label">SUPORTE</span>
-                      <strong>Tecnico e continuo</strong>
+                      <strong>Técnico e contínuo</strong>
                     </article>
                     <article>
                       <span class="mini-label">STACK</span>
@@ -213,11 +219,94 @@
           <div class="container strip-grid">
             <p class="eyebrow">SOBRE A 404DEVS</p>
             <p class="strip-text">
-              Unimos desenvolvimento full stack, suporte tecnico e visao
+              Unimos desenvolvimento full stack, suporte técnico e visão
               operacional para entregar software sob medida. Nossa equipe atua
-              com levantamento de requisitos, documentacao, arquitetura e
+              com levantamento de requisitos, documentação, arquitetura e
               acompanhamento direto para garantir entrega alinhada ao cliente.
             </p>
+          </div>
+        </section>
+        <div class="section-transition" aria-hidden="true">
+          <div class="transition-glow"></div>
+          <div class="transition-track"></div>
+          <div class="transition-sweep"></div>
+        </div>
+
+        <section class="section showcase-section" id="barberflow">
+          <div class="container showcase-grid">
+            <div class="showcase-copy" data-reveal="up">
+              <p class="eyebrow">PRODUTO 404DEVS</p>
+              <h2><span class="showcase-brand">BarberFlow</span> é um sistema de gestão para barbearias que faz parte da nossa linha de produtos.</h2>
+              <p class="showcase-text">
+                O BarberFlow é um dos produtos que vendemos na 404Devs. Ele foi
+                pensado para organizar a rotina da barbearia com agenda,
+                atendimento, clientes, serviços e operação em um fluxo claro e
+                usável no dia a dia.
+              </p>
+
+              <div class="showcase-pills">
+                <span class="tag tag-cyan">React / React Native</span>
+                <span class="tag tag-magenta">Node.js / APIs</span>
+                <span class="tag tag-matrix">SQL + NoSQL</span>
+                <span class="tag">Produto sob medida</span>
+              </div>
+
+              <div class="hero-actions showcase-actions">
+                <a class="button button-primary" href="https://www.appbarberflow.com.br/" target="_blank" rel="noreferrer">Conhecer o BarberFlow</a>
+              </div>
+
+              <div class="showcase-notes">
+                <article>
+                  <span class="mini-label">PRODUTO</span>
+                  <strong>Sistema de gestão feito para a rotina da barbearia</strong>
+                </article>
+                <article>
+                  <span class="mini-label">VISAO</span>
+                  <strong>Organizar atendimento, equipe e operação em um só lugar</strong>
+                </article>
+              </div>
+            </div>
+
+            <div class="showcase-card" data-reveal="up" data-delay="80">
+              <div class="showcase-card__topline">
+                <span class="signal"></span>
+                <span class="signal"></span>
+                <span class="signal"></span>
+                <p>BarberFlow Management System</p>
+              </div>
+
+              <div class="showcase-stage">
+                <div class="showcase-stage__glow"></div>
+                <div class="showcase-device">
+                  <div class="showcase-device__screen">
+                    <span class="showcase-device__eyebrow">BARBERFLOW</span>
+                    <strong class="showcase-device__title">Gestão de barbearia com agenda, clientes e operação em um fluxo só.</strong>
+                    <div class="showcase-device__list">
+                      <span>Agendamentos organizados</span>
+                      <span>Gestão de clientes, barbeiros e serviços</span>
+                      <span>Painel para operação diária da barbearia</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="showcase-data">
+                  <article>
+                    <span class="mini-label">TIPO</span>
+                    <strong>Produto próprio da 404Devs</strong>
+                  </article>
+                  <article>
+                    <span class="mini-label">OBJETIVO</span>
+                    <strong>Transformar a rotina da barbearia em um sistema prático e vendável</strong>
+                  </article>
+                  <article>
+                    <span class="mini-label">BASE</span>
+                    <strong>Front-end, back-end, dados e experiência de uso trabalhando juntos</strong>
+                  </article>
+                </div>
+
+                <img class="showcase-scissors" src="./assets/tesoura.png" alt="" aria-hidden="true">
+              </div>
+            </div>
           </div>
         </section>
         <div class="section-transition" aria-hidden="true">
@@ -229,7 +318,7 @@
         <section class="section" id="servicos">
           <div class="container">
             <div class="section-heading" data-reveal="up">
-              <p class="eyebrow">NOSSOS SERVICOS</p>
+              <p class="eyebrow">NOSSOS SERVIÇOS</p>
               <h2>Construimos produtos digitais com foco em resultado.</h2>
             </div>
 
@@ -239,25 +328,25 @@
                 <h3>Sistemas Web e Landing Pages</h3>
                 <p>
                   Criamos interfaces responsivas em React, HTML5 e CSS3 com foco
-                  em usabilidade, clareza e resultado para o seu negocio.
+                  em usabilidade, clareza e resultado para o seu negócio.
                 </p>
               </article>
 
               <article class="content-card" data-reveal="up" data-delay="80">
                 <p class="card-index">02</p>
-                <h3>Back-end, APIs e Integracoes</h3>
+                <h3>Back-end, APIs e Integrações</h3>
                 <p>
-                  Desenvolvemos APIs e servicos com C#/.NET e Node.js/TypeScript,
+                  Desenvolvemos APIs e serviços com C#/.NET e Node.js/TypeScript,
                   incluindo modelagem de dados SQL e NoSQL para performance real.
                 </p>
               </article>
 
               <article class="content-card" data-reveal="up" data-delay="160">
                 <p class="card-index">03</p>
-                <h3>Consultoria Tecnica e Suporte</h3>
+                <h3>Consultoria Técnica e Suporte</h3>
                 <p>
-                  Atuamos no levantamento de requisitos, documentacao e suporte
-                  avancado, mantendo alinhamento constante com quem contrata.
+                  Atuamos no levantamento de requisitos, documentação e suporte
+                  avançado, mantendo alinhamento constante com quem contrata.
                 </p>
               </article>
             </div>
@@ -282,8 +371,8 @@
                 <div>
                   <h3>Levantamento e Alinhamento</h3>
                   <p>
-                    Mapeamos objetivos, regras de negocio e expectativas para
-                    definir escopo tecnico com comunicacao direta e transparente.
+                    Mapeamos objetivos, regras de negócio e expectativas para
+                    definir escopo técnico com comunicação direta e transparente.
                   </p>
                 </div>
               </article>
@@ -294,7 +383,7 @@
                   <h3>Arquitetura e Desenvolvimento</h3>
                   <p>
                     Construimos front-end, back-end e banco de dados com stack
-                    adequada ao projeto, priorizando desempenho e manutencao.
+                    adequada ao projeto, priorizando desempenho e manutenção.
                   </p>
                 </div>
               </article>
@@ -302,10 +391,10 @@
               <article class="process-item" data-reveal="left" data-delay="160">
                 <span class="process-step">03</span>
                 <div>
-                  <h3>Validacao e Publicacao</h3>
+                  <h3>Validação e Publicação</h3>
                   <p>
                     Testamos fluxos criticos, ajustamos consultas e publicamos a
-                    solucao com estabilidade e seguranca.
+                    solução com estabilidade e segurança.
                   </p>
                 </div>
               </article>
@@ -315,7 +404,7 @@
                 <div>
                   <h3>Acompanhamento e Suporte</h3>
                   <p>
-                    Continuamos com suporte tecnico, melhorias evolutivas e
+                    Continuamos com suporte técnico, melhorias evolutivas e
                     monitoramento para manter o sistema eficiente no dia a dia.
                   </p>
                 </div>
@@ -348,15 +437,15 @@
               <div class="tech-grid">
                 <article class="tech-card" data-reveal="up">
                   <span class="tech-name">C# e .NET</span>
-                  <p>Web APIs, servicos em background e base solida para sistemas escalaveis.</p>
+                  <p>Web APIs, serviços em background e base sólida para sistemas escaláveis.</p>
                 </article>
                 <article class="tech-card" data-reveal="up" data-delay="60">
                   <span class="tech-name">Node.js e TypeScript</span>
-                  <p>Servicos assincronos com tipagem segura para reduzir erro em producao.</p>
+                  <p>Serviços assíncronos com tipagem segura para reduzir erro em produção.</p>
                 </article>
                 <article class="tech-card" data-reveal="up" data-delay="120">
                   <span class="tech-name">React e React Native</span>
-                  <p>Interfaces modernas para web e mobile com foco em usabilidade e consistencia.</p>
+                  <p>Interfaces modernas para web e mobile com foco em usabilidade e consistência.</p>
                 </article>
                 <article class="tech-card" data-reveal="up" data-delay="180">
                   <span class="tech-name">SQL e NoSQL</span>
@@ -364,7 +453,7 @@
                 </article>
                 <article class="tech-card" data-reveal="up" data-delay="240">
                   <span class="tech-name">Git, GitHub e Ferramentas</span>
-                  <p>Versionamento, colaboracao e fluxo tecnico com VS Code, Visual Studio, Figma e Expo.</p>
+                  <p>Versionamento, colaboração e fluxo técnico com VS Code, Visual Studio, Figma e Expo.</p>
                 </article>
               </div>
             </div>
@@ -379,25 +468,26 @@
         <section class="section section-contrast">
           <div class="container">
             <div class="section-heading" data-reveal="up">
-              <p class="eyebrow">DEPOIMENTOS FICTICIOS</p>
+              <p class="eyebrow">DEPOIMENTOS FICTÍCIOS</p>
               <h2>Exemplos de impacto que buscamos gerar em cada entrega.</h2>
             </div>
 
             <div class="testimonials-grid">
               <article class="testimonial-card" data-reveal="up">
                 <p class="quote">
-                  "A 404Devs transformou nossa presenca digital. Com a nova landing
-                  page, aumentamos nossa taxa de conversao em 40%."
+                    "A 404Devs transformou nossa presença digital. Com a nova landing
+                  page, aumentamos nossa taxa de conversão em 40%."
                 </p>
                 <span class="quote-author">Dental Easy</span>
               </article>
 
               <article class="testimonial-card" data-reveal="up" data-delay="100">
                 <p class="quote">
-                  "Trabalhamos com a 404Devs em nosso aplicativo, e os resultados
-                  foram surpreendentes. Nossa plataforma agora e mais rapida e facil de usar."
+                  "Com o BarberFlow, nossa rotina ficou mais organizada. Agenda,
+                  atendimento e gestão dos serviços passaram a acontecer em um fluxo
+                  muito mais simples no dia a dia."
                 </p>
-                <span class="quote-author">BarberFlow</span>
+                <span class="quote-author">Barbearia Alfa</span>
               </article>
             </div>
           </div>
@@ -412,7 +502,7 @@
           <div class="container">
             <div class="section-heading" data-reveal="up">
               <p class="eyebrow">NOSSO TIME</p>
-              <h2>Os 4 desenvolvedores por tras da 404Devs.</h2>
+              <h2>Os 4 desenvolvedores por trás da 404Devs.</h2>
             </div>
 
             <div class="swiper team-swiper" data-reveal="up">
@@ -511,7 +601,7 @@
                     <div class="team-card__footer">
                       <div class="team-card__identity">
                         <h3>Wendell Nascimento</h3>
-                        <p>Back-end & ciberseguranca</p>
+                        <p>Back-end & cibersegurança</p>
                       </div>
                       <div class="team-card__actions">
                         <a class="team-social" href="https://www.linkedin.com/in/wendell-nascimento-0923a8244?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" target="_blank" rel="noreferrer" aria-label="LinkedIn de Wendell Nascimento">
@@ -545,24 +635,104 @@
           <div class="container">
             <div class="section-heading" data-reveal="up">
               <p class="eyebrow">POR QUE ESCOLHER A 404DEVS?</p>
-              <h2>Parceria tecnica pensada para evolucao continua.</h2>
+              <h2>Parceria técnica pensada para evolução contínua.</h2>
             </div>
 
             <div class="card-grid reasons-grid">
               <article class="content-card accent-magenta" data-reveal="up">
-                <h3>Comunicacao Sem Ruido</h3>
-                <p>Alinhamento direto com o cliente, do briefing inicial ate a entrega final.</p>
+                <h3>Comunicação Sem Ruído</h3>
+                <p>Alinhamento direto com o cliente, do briefing inicial até a entrega final.</p>
               </article>
 
               <article class="content-card accent-cyan" data-reveal="up" data-delay="70">
-                <h3>Arquitetura Escalavel</h3>
-                <p>Back-end estruturado, APIs consistentes e banco otimizado para crescimento sustentavel.</p>
+                <h3>Arquitetura Escalável</h3>
+                <p>Back-end estruturado, APIs consistentes e banco otimizado para crescimento sustentável.</p>
               </article>
 
               <article class="content-card accent-matrix" data-reveal="up" data-delay="140">
-                <h3>Suporte Operacional e Tecnico</h3>
-                <p>Experiencia em atendimento e suporte avancado para resolver problemas reais com agilidade.</p>
+                <h3>Suporte Operacional e Técnico</h3>
+                <p>Experiência em atendimento e suporte avançado para resolver problemas reais com agilidade.</p>
               </article>
+            </div>
+          </div>
+        </section>
+        <div class="section-transition" aria-hidden="true">
+          <div class="transition-glow"></div>
+          <div class="transition-track"></div>
+          <div class="transition-sweep"></div>
+        </div>
+
+        <!-- ── Agendar Call ── -->
+        <section class="section schedule-section" id="agendar">
+          <div class="container">
+            <div class="section-heading" data-reveal="up">
+              <p class="eyebrow">AGENDAR UMA CALL</p>
+              <h2>Vamos conversar sobre o seu projeto.</h2>
+            </div>
+
+            <div class="schedule-grid">
+              <div class="schedule-info" data-reveal="up">
+                <p class="schedule-desc">
+                  Preencha o formulário ao lado e nós abriremos sua janela de e-mail com tudo já pré-preenchido. Respondemos em até 24 horas úteis com disponibilidade e próximos passos.
+                </p>
+
+                <ul class="schedule-perks">
+                  <li>
+                    <span class="perk-icon" aria-hidden="true">→</span>
+                    <div>
+                      <strong>Sem compromisso</strong>
+                      <p>Primeira conversa é gratuita e sem pressão de venda.</p>
+                    </div>
+                  </li>
+                  <li>
+                    <span class="perk-icon" aria-hidden="true">→</span>
+                    <div>
+                      <strong>Resposta rápida</strong>
+                      <p>Retorno em até 24 horas úteis com disponibilidade real.</p>
+                    </div>
+                  </li>
+                  <li>
+                    <span class="perk-icon" aria-hidden="true">→</span>
+                    <div>
+                      <strong>Proposta técnica</strong>
+                      <p>Saindo da call com escopo, stack e prioridades definidos.</p>
+                    </div>
+                  </li>
+                </ul>
+
+                <a class="schedule-email-link" href="mailto:404devsoficial@gmail.com" aria-label="Enviar e-mail para 404devsoficial@gmail.com">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Zm0 4-8 5-8-5V6l8 5 8-5v2Z"/></svg>
+                  404devsoficial@gmail.com
+                </a>
+              </div>
+
+              <form class="schedule-form" id="schedule-form" data-reveal="up" data-delay="80" novalidate>
+                <div class="form-group">
+                  <label for="call-name">Nome completo</label>
+                  <input type="text" id="call-name" name="name" placeholder="Seu nome" autocomplete="name" required>
+                </div>
+
+                <div class="form-group">
+                  <label for="call-email">Seu e-mail</label>
+                  <input type="email" id="call-email" name="email" placeholder="voce@empresa.com" autocomplete="email" required>
+                </div>
+
+                <div class="form-group">
+                  <label for="call-time">Melhor horário para a call</label>
+                  <input type="text" id="call-time" name="time" placeholder="Ex: Seg–Sex, das 14h às 18h">
+                </div>
+
+                <div class="form-group">
+                  <label for="call-project">Objetivo do projeto</label>
+                  <textarea id="call-project" name="project" rows="4" placeholder="Descreva brevemente o que você precisa..."></textarea>
+                </div>
+
+                <div class="form-feedback" id="schedule-feedback" aria-live="polite"></div>
+
+                <button class="button button-primary schedule-submit" type="submit" id="schedule-submit">
+                  Abrir e-mail para agendar
+                </button>
+              </form>
             </div>
           </div>
         </section>
@@ -577,13 +747,13 @@
             <p class="eyebrow">ENTRE EM CONTATO</p>
             <h2>Pronto para transformar seu projeto digital?</h2>
             <p>
-              Agende uma conversa e receba uma proposta tecnica clara, com stack,
-              escopo e prioridades definidos para o seu momento de negocio.
+              Agende uma conversa e receba uma proposta técnica clara, com stack,
+              escopo e prioridades definidos para o seu momento de negócio.
             </p>
 
             <div class="hero-actions">
-              <a class="button button-primary" href="https://wa.me/5517996142053" target="_blank" rel="noreferrer">Comecar agora</a>
-              <a class="button button-ghost" href="#servicos">Revisar servicos</a>
+              <a class="button button-primary" href="https://wa.me/5517996142053" target="_blank" rel="noreferrer">Começar agora</a>
+              <a class="button button-ghost" href="#servicos">Revisar serviços</a>
             </div>
           </div>
         </section>
@@ -594,7 +764,7 @@
           <div>
             <p class="footer-brand">404Devs</p>
             <p class="footer-copy">Sites, landing pages e aplicativos sob medida para empresas.</p>
-            <p class="footer-copy">© 2026 404Devs. Todos os direitos reservados. Este site e propriedade da 404Devs.</p>
+            <p class="footer-copy">© 2026 404Devs. Todos os direitos reservados. Este site é propriedade da 404Devs.</p>
           </div>
 
           <div class="footer-socials">

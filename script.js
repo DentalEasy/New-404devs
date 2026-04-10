@@ -1,7 +1,7 @@
 const header = document.querySelector(".site-header");
 const floatingSidebar = document.querySelector(".floating-sidebar");
 const sidebarLinks = Array.from(document.querySelectorAll(".floating-sidebar [data-section-link]"));
-const sidebarSectionIds = ["servicos", "processo", "tecnologias", "time", "contato"];
+const sidebarSectionIds = ["servicos", "processo", "tecnologias", "time", "agendar", "contato"];
 const sidebarSections = sidebarSectionIds
   .map((id) => document.getElementById(id))
   .filter(Boolean);
@@ -748,6 +748,47 @@ const createGsapAnimations = () => {
         },
       }
     );
+
+    gsap.fromTo(
+      ".showcase-scissors",
+      { rotate: 52, x: 0, y: 0 },
+      {
+        rotate: 52,
+        x: -20,
+        y: 30,
+        ease: "none",
+        scrollTrigger: {
+          trigger: ".showcase-section",
+          start: "top 80%",
+          end: "bottom 20%",
+          scrub: true,
+        },
+      }
+    );
+
+    gsap.to(".showcase-scissors", {
+      scale: 1.08,
+      duration: 3,
+      repeat: -1,
+      yoyo: true,
+      ease: "sine.inOut",
+    });
+
+    gsap.fromTo(
+      ".showcase-device__screen",
+      { rotateY: -30, rotateX: 12 },
+      {
+        rotateY: 30,
+        rotateX: -12,
+        ease: "none",
+        scrollTrigger: {
+          trigger: ".showcase-section",
+          start: "top 80%",
+          end: "bottom 20%",
+          scrub: true,
+        },
+      }
+    );
   }
 };
 
@@ -905,3 +946,254 @@ createIntroAutoScroll();
 createGsapAnimations();
 createCardHoverEffects();
 createTeamSwiper();
+
+const createGlitchParticles = () => {
+  if (prefersReducedMotion) return;
+
+  const panelFrame = document.querySelector(".hero-panel .panel-frame");
+  if (!panelFrame) return;
+
+  /* ── Fixed canvas — covers the whole viewport, bypasses all clipping ── */
+  const cvs = document.createElement("canvas");
+  cvs.setAttribute("aria-hidden", "true");
+  cvs.style.cssText =
+    "position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9998;";
+  document.body.appendChild(cvs);
+
+  const ctx = cvs.getContext("2d");
+  let particles = [];
+
+  const WORDS  = ["404", "ERRO", "NULL", "ERR!", "BUG", "0x0", "FAIL", "???"];
+  const COLORS = [
+    [0, 229, 255],    // cyan
+    [255, 184, 0],    // gold
+    [0, 255, 65],     // matrix green
+    [255, 50, 100],   // red
+    [255, 255, 255],  // white
+  ];
+
+  /* Resize canvas to match the actual viewport */
+  const resize = () => {
+    cvs.width  = window.innerWidth;
+    cvs.height = window.innerHeight;
+  };
+
+  /* Check if the panel is currently visible in the viewport */
+  const isPanelVisible = () => {
+    const r = panelFrame.getBoundingClientRect();
+    return r.bottom > 0 && r.top < window.innerHeight;
+  };
+
+  /*
+   * Particles spawn along the 4 edges of panel-frame.
+   * getBoundingClientRect() is viewport-relative → matches fixed canvas coords.
+   */
+  const spawnBurst = (minCount = 8, maxCount = 14) => {
+    if (!isPanelVisible()) return;
+
+    const fr = panelFrame.getBoundingClientRect();  // viewport-relative
+    const ox = fr.left;
+    const oy = fr.top;
+    const fw = fr.width;
+    const fh = fr.height;
+
+    const count = minCount + Math.floor(Math.random() * (maxCount - minCount + 1));
+
+    for (let i = 0; i < count; i++) {
+      const word  = WORDS[Math.floor(Math.random() * WORDS.length)];
+      const color = COLORS[Math.floor(Math.random() * COLORS.length)];
+      const size  = 10 + Math.random() * 14;
+
+      /* Pick a random edge: 0=top 1=right 2=bottom 3=left */
+      const edge = Math.floor(Math.random() * 4);
+      let spawnX, spawnY, baseAngle;
+
+      switch (edge) {
+        case 0: /* top */
+          spawnX    = ox + Math.random() * fw;
+          spawnY    = oy;
+          baseAngle = -Math.PI / 2;   /* upward */
+          break;
+        case 1: /* right */
+          spawnX    = ox + fw;
+          spawnY    = oy + Math.random() * fh;
+          baseAngle = 0;              /* rightward */
+          break;
+        case 2: /* bottom */
+          spawnX    = ox + Math.random() * fw;
+          spawnY    = oy + fh;
+          baseAngle = Math.PI / 2;    /* downward */
+          break;
+        default: /* left */
+          spawnX    = ox;
+          spawnY    = oy + Math.random() * fh;
+          baseAngle = Math.PI;        /* leftward */
+          break;
+      }
+
+      /* ±55° spread around perpendicular */
+      const spread = (Math.random() - 0.5) * (Math.PI * 110 / 180);
+      const angle  = baseAngle + spread;
+      const speed  = 2.0 + Math.random() * 4.0;
+
+      particles.push({
+        x:     spawnX,
+        y:     spawnY,
+        vx:    Math.cos(angle) * speed,
+        vy:    Math.sin(angle) * speed,
+        word, color, size,
+        life:  1.0,
+        decay: 0.026 + Math.random() * 0.024,
+        rot:   (Math.random() - 0.5) * 0.7,
+        rotV:  (Math.random() - 0.5) * 0.07,
+        skew:  (Math.random() - 0.5) * 0.32,
+        ca:    Math.random() > 0.45,
+      });
+    }
+  };
+
+  /* Render loop */
+  const tick = () => {
+    ctx.clearRect(0, 0, cvs.width, cvs.height);
+
+    for (let i = particles.length - 1; i >= 0; i--) {
+      const p = particles[i];
+      p.x   += p.vx;
+      p.y   += p.vy;
+      p.vy  += 0.05;        // gravity
+      p.life -= p.decay;
+      p.rot  += p.rotV;
+
+      if (p.life <= 0) { particles.splice(i, 1); continue; }
+
+      const a = Math.max(0, p.life);
+      const [r, g, b] = p.color;
+
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot);
+      ctx.transform(1, 0, p.skew, 1, 0, 0);
+
+      ctx.font         = `bold ${p.size}px "IBM Plex Mono", monospace`;
+      ctx.textAlign    = "center";
+      ctx.textBaseline = "middle";
+
+      ctx.shadowBlur  = 14;
+      ctx.shadowColor = `rgba(${r},${g},${b},${(a * 0.7).toFixed(2)})`;
+      ctx.fillStyle   = `rgba(${r},${g},${b},${a.toFixed(2)})`;
+      ctx.fillText(p.word, 0, 0);
+
+      if (p.ca && a > 0.25) {
+        ctx.shadowBlur = 0;
+        ctx.fillStyle  = `rgba(${r},${g},${b},${(a * 0.28).toFixed(2)})`;
+        ctx.fillText(p.word, 3, -1);
+      }
+
+      ctx.restore();
+    }
+
+    requestAnimationFrame(tick);
+  };
+
+  /* Sync with CSS: 2.5 s cycle, glitch at 55 % ≈ 1375 ms */
+  const CYCLE  = 2500;
+  const OFFSET = 1375;
+
+  const fireCycle = () => {
+    spawnBurst(8, 14);
+    setTimeout(() => spawnBurst(4, 7), 530);
+  };
+
+  const syncAndStart = () => {
+    const delay = (OFFSET - (Date.now() % CYCLE) + CYCLE) % CYCLE;
+    setTimeout(() => {
+      fireCycle();
+      setInterval(fireCycle, CYCLE);
+    }, delay);
+  };
+
+  resize();
+  window.addEventListener("resize", resize, { passive: true });
+  tick();
+  syncAndStart();
+};
+
+createGlitchParticles();
+
+const createScheduleForm = () => {
+  const form     = document.getElementById("schedule-form");
+  const btn      = document.getElementById("schedule-submit");
+  const feedback = document.getElementById("schedule-feedback");
+  if (!form) return;
+
+  const setFeedback = (msg, isError = false) => {
+    if (!feedback) return;
+    feedback.textContent = msg;
+    feedback.className   = "form-feedback" + (isError ? " is-error" : "");
+  };
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    const name    = document.getElementById("call-name")?.value.trim()    ?? "";
+    const email   = document.getElementById("call-email")?.value.trim()   ?? "";
+    const time    = document.getElementById("call-time")?.value.trim()    ?? "";
+    const project = document.getElementById("call-project")?.value.trim() ?? "";
+
+    /* Basic validation */
+    if (!name) {
+      setFeedback("Por favor, informe seu nome.", true);
+      document.getElementById("call-name")?.focus();
+      return;
+    }
+    if (!email || !/^[^\s@]+@[^^\s@]+\.[^\s@]+$/.test(email)) {
+      setFeedback("Informe um e-mail válido para contato.", true);
+      document.getElementById("call-email")?.focus();
+      return;
+    }
+
+    /* Build mailto */
+    const subject = `[Call Request] ${name} — 404Devs`;
+    const body = [
+      `Olá, time 404Devs!`,
+      ``,
+      `Gostaria de agendar uma call para conversar sobre meu projeto.`,
+      ``,
+      `📋 Dados do solicitante`,
+      `Nome: ${name}`,
+      `E-mail de resposta: ${email}`,
+      `Melhor horário: ${time || "Não especificado"}`,
+      ``,
+      `📌 Objetivo do projeto`,
+      project || "Não especificado",
+      ``,
+      `---`,
+      `Mensagem enviada pelo formulário do site 404Devs.`,
+    ].join("\n");
+
+    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1`
+      + `&to=${encodeURIComponent("404devsoficial@gmail.com")}`
+      + `&su=${encodeURIComponent(subject)}`
+      + `&body=${encodeURIComponent(body)}`;
+
+    window.open(gmailUrl, "_blank", "noopener,noreferrer");
+
+    /* Visual feedback */
+    if (btn) {
+      btn.textContent = "✔ E-mail pronto! Confira seu cliente de e-mail.";
+      btn.classList.add("is-sent");
+    }
+    setFeedback("✔ Janela de e-mail aberta com os dados preenchidos.");
+
+    setTimeout(() => {
+      if (btn) {
+        btn.textContent = "Abrir e-mail para agendar";
+        btn.classList.remove("is-sent");
+      }
+      setFeedback("");
+    }, 6000);
+  });
+};
+
+createScheduleForm();
+
