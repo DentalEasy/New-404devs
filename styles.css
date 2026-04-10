@@ -1993,7 +1993,7 @@ textarea {
   }
 
   .hero-title__back {
-    left: clamp(4.6rem, 17vw, 8.4rem);
+    display: none;
   }
 
   .hero-subtitle,
