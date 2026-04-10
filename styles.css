@@ -771,6 +771,7 @@ textarea {
 .process-item,
 .tech-summary {
   position: relative;
+  overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.08);
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02)),
@@ -1236,6 +1237,7 @@ textarea {
   flex-wrap: wrap;
   gap: 1rem;
   padding: 0.95rem 1rem;
+  overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.07);
   border-radius: 0.8rem;
   background: rgba(255, 255, 255, 0.02);
@@ -1287,6 +1289,7 @@ textarea {
 
 .display-grid article {
   padding: 1rem;
+  overflow: hidden;
   border-radius: 0.85rem;
   border: 1px solid rgba(255, 255, 255, 0.08);
   background: rgba(255, 255, 255, 0.03);
@@ -1453,6 +1456,7 @@ textarea {
 .showcase-notes article,
 .showcase-data article {
   padding: 1rem 1.05rem;
+  overflow: hidden;
   border-radius: 1rem;
   border: 1px solid rgba(255, 255, 255, 0.08);
   background: rgba(255, 255, 255, 0.03);
@@ -1484,6 +1488,7 @@ textarea {
   content: "";
   position: absolute;
   inset: 0;
+  border-radius: inherit;
   background:
     linear-gradient(120deg, rgba(255, 255, 255, 0.05), transparent 24%, transparent 72%, rgba(0, 229, 255, 0.08)),
     radial-gradient(circle at 72% 24%, rgba(0, 229, 255, 0.1), transparent 22%);
