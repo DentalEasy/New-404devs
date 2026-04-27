@@ -1,7 +1,7 @@
 const header = document.querySelector(".site-header");
 const floatingSidebar = document.querySelector(".floating-sidebar");
 const sidebarLinks = Array.from(document.querySelectorAll(".floating-sidebar [data-section-link]"));
-const sidebarSectionIds = ["servicos", "processo", "tecnologias", "time", "contato"];
+const sidebarSectionIds = ["servicos", "processo", "tecnologias", "time", "agendar", "contato"];
 const sidebarSections = sidebarSectionIds
   .map((id) => document.getElementById(id))
   .filter(Boolean);
@@ -176,7 +176,8 @@ const createCursorEffect = () => {
 };
 
 const createCanvasBackground = () => {
-  if (!canvas || prefersReducedMotion) return;
+  // Disable canvas entirely on touch/mobile devices — big GPU win
+  if (!canvas || prefersReducedMotion || prefersCoarsePointer) return;
 
   const context = canvas.getContext("2d");
   if (!context) return;
@@ -184,71 +185,32 @@ const createCanvasBackground = () => {
   let rafId = 0;
   let isAnimating = false;
 
+  // Static gradients cached on resize — not recreated every frame
+  let cachedBase = null;
+  let cachedAccent = null;
+  let cachedLeftShade = null;
+
   const getPerfProfile = () => {
-    const compact = isCompactViewport();
-    const lightMode = compact || prefersCoarsePointer || hasLowCpu || hasSaveData;
-
-    if (lightMode) {
-      return {
-        dprCap: 1.2,
-        spacingDivisor: 10,
-        minSpacing: 74,
-        frameMs: 1000 / 22,
-        shadowBlur: 9,
-        drawMesh: false,
-      };
-    }
-
-    return {
-      dprCap: 1.8,
-      spacingDivisor: 18,
-      minSpacing: 56,
-      frameMs: 1000 / 30,
-      shadowBlur: 16,
-      drawMesh: true,
-    };
+    return hasLowCpu || hasSaveData
+      ? { dprCap: 1.0, spacingDivisor: 8, minSpacing: 90, frameMs: 1000 / 18, drawMesh: false }
+      : { dprCap: 1.5, spacingDivisor: 14, minSpacing: 62, frameMs: 1000 / 28, drawMesh: false };
   };
 
   const state = {
-    width: 0,
-    height: 0,
-    dpr: 1,
-    columns: [],
-    pulse: 0,
-    lastFrameTime: 0,
+    width: 0, height: 0, dpr: 1,
+    columns: [], pulse: 0, lastFrameTime: 0,
     profile: getPerfProfile(),
   };
 
-  const palette = [
-    "0,229,255",
-    "255,184,0",
-    "0,255,65",
-    "224,224,224",
-  ];
+  const palette = ["0,229,255", "255,184,0", "0,255,65", "224,224,224"];
 
   const snippets = [
-    "> init 404devs",
-    "> deploy --prod",
-    "> ship feature",
-    "> npm run build",
-    "> pnpm dev",
-    "> git push origin main",
-    "Error 404",
-    "BUG DETECTED",
-    "stack trace",
-    "UnhandledError",
-    "ERR_MODULE_NOT_FOUND",
-    "Promise rejected",
-    "route: /not-found",
-    "{ status: 404 }",
-    "logs streaming...",
-    "compile success",
-    "patch applied",
-    "system online",
-    "prompt -> build",
-    "fixing layout shift",
-    "reconnecting...",
-    "launch sequence",
+    "> init 404devs", "> deploy --prod", "> ship feature",
+    "> npm run build", "> pnpm dev", "> git push origin main",
+    "Error 404", "BUG DETECTED", "stack trace",
+    "UnhandledError", "ERR_MODULE_NOT_FOUND", "Promise rejected",
+    "route: /not-found", "{ status: 404 }", "logs streaming...",
+    "compile success", "patch applied", "system online",
   ];
 
   const randomBetween = (min, max) => min + Math.random() * (max - min);
@@ -259,17 +221,35 @@ const createCanvasBackground = () => {
   );
 
   const createColumn = (index, spacing) => {
-    const size = randomBetween(12, 18);
+    const size = randomBetween(11, 16);
     return {
       x: index * spacing + randomBetween(-8, 8),
       y: randomBetween(-state.height, state.height),
-      speed: randomBetween(0.35, 1.1),
+      speed: randomBetween(0.3, 0.9),
       size,
-      alpha: randomBetween(0.08, 0.22),
+      alpha: randomBetween(0.07, 0.2),
       color: palette[Math.floor(Math.random() * palette.length)],
       text: snippets[Math.floor(Math.random() * snippets.length)],
-      shift: Math.random() > 0.6,
     };
+  };
+
+  const rebuildGradients = () => {
+    cachedBase = context.createLinearGradient(0, 0, state.width, state.height);
+    cachedBase.addColorStop(0, "rgba(0,0,0,0.995)");
+    cachedBase.addColorStop(0.32, "rgba(3,3,3,0.99)");
+    cachedBase.addColorStop(0.68, "rgba(2,4,4,0.985)");
+    cachedBase.addColorStop(1, "rgba(0,0,0,0.995)");
+
+    cachedAccent = context.createLinearGradient(0, 0, state.width, 0);
+    cachedAccent.addColorStop(0, "rgba(255,184,0,0.022)");
+    cachedAccent.addColorStop(0.28, "rgba(255,184,0,0.008)");
+    cachedAccent.addColorStop(0.62, "rgba(0,255,65,0.01)");
+    cachedAccent.addColorStop(1, "rgba(0,229,255,0.025)");
+
+    cachedLeftShade = context.createLinearGradient(0, 0, state.width * 0.42, 0);
+    cachedLeftShade.addColorStop(0, "rgba(0,0,0,0.28)");
+    cachedLeftShade.addColorStop(0.45, "rgba(0,0,0,0.12)");
+    cachedLeftShade.addColorStop(1, "rgba(0,0,0,0)");
   };
 
   const resize = () => {
@@ -284,127 +264,54 @@ const createCanvasBackground = () => {
     canvas.style.height = `${state.height}px`;
     context.setTransform(state.dpr, 0, 0, state.dpr, 0, 0);
 
+    rebuildGradients();
+
     const spacing = getColumnSpacing();
-    const nextCount = Math.ceil(state.width / spacing) + 3;
+    const nextCount = Math.ceil(state.width / spacing) + 2;
     state.columns = Array.from({ length: nextCount }, (_, index) => createColumn(index, spacing));
   };
 
   const ensureCanvasSize = () => {
-    const nextWidth = Math.max(window.innerWidth, 1);
-    const nextHeight = Math.max(window.innerHeight, 1);
-
-    if (nextWidth !== state.width || nextHeight !== state.height || canvas.width === 0 || canvas.height === 0) {
-      resize();
-    }
+    const nw = Math.max(window.innerWidth, 1);
+    const nh = Math.max(window.innerHeight, 1);
+    if (nw !== state.width || nh !== state.height || canvas.width === 0) resize();
   };
 
   const tick = (time = 0) => {
-    if (document.hidden) {
-      isAnimating = false;
-      rafId = 0;
-      return;
-    }
-
+    if (document.hidden) { isAnimating = false; rafId = 0; return; }
     if (time - state.lastFrameTime < state.profile.frameMs) {
       rafId = window.requestAnimationFrame(tick);
       return;
     }
-
     state.lastFrameTime = time;
-
     ensureCanvasSize();
-
     state.pulse += 0.008;
+
     context.clearRect(0, 0, state.width, state.height);
 
-    const baseGradient = context.createLinearGradient(0, 0, state.width, state.height);
-    baseGradient.addColorStop(0, "rgba(0,0,0,0.995)");
-    baseGradient.addColorStop(0.32, "rgba(3,3,3,0.99)");
-    baseGradient.addColorStop(0.68, "rgba(2,4,4,0.985)");
-    baseGradient.addColorStop(1, "rgba(0,0,0,0.995)");
-    context.fillStyle = baseGradient;
+    // Cached static backgrounds
+    context.fillStyle = cachedBase;
     context.fillRect(0, 0, state.width, state.height);
-
-    const accentGradient = context.createLinearGradient(0, 0, state.width, 0);
-    accentGradient.addColorStop(0, "rgba(255,184,0,0.022)");
-    accentGradient.addColorStop(0.28, "rgba(255,184,0,0.008)");
-    accentGradient.addColorStop(0.62, "rgba(0,255,65,0.01)");
-    accentGradient.addColorStop(1, "rgba(0,229,255,0.025)");
-    context.fillStyle = accentGradient;
+    context.fillStyle = cachedAccent;
     context.fillRect(0, 0, state.width, state.height);
-
-    const pulseGlow = context.createRadialGradient(
-      state.width * 0.52,
-      state.height * 0.34,
-      0,
-      state.width * 0.52,
-      state.height * 0.34,
-      Math.max(state.width, state.height) * 0.42
-    );
-    pulseGlow.addColorStop(0, `rgba(0,229,255,${0.022 + Math.sin(state.pulse) * 0.006})`);
-    pulseGlow.addColorStop(0.45, "rgba(0,255,65,0.012)");
-    pulseGlow.addColorStop(0.7, "rgba(255,184,0,0.01)");
-    pulseGlow.addColorStop(1, "rgba(0,0,0,0)");
-    context.fillStyle = pulseGlow;
-    context.fillRect(0, 0, state.width, state.height);
-
-    const leftShade = context.createLinearGradient(0, 0, state.width * 0.42, 0);
-    leftShade.addColorStop(0, "rgba(0,0,0,0.28)");
-    leftShade.addColorStop(0.45, "rgba(0,0,0,0.12)");
-    leftShade.addColorStop(1, "rgba(0,0,0,0)");
-    context.fillStyle = leftShade;
+    context.fillStyle = cachedLeftShade;
     context.fillRect(0, 0, state.width * 0.42, state.height);
 
     context.textBaseline = "top";
-    context.lineWidth = 1;
+    context.shadowBlur = 0; // No shadowBlur — GPU win
 
     state.columns.forEach((column, index) => {
       column.y += column.speed;
-
       if (column.y > state.height + 80) {
         const spacing = getColumnSpacing();
         state.columns[index] = createColumn(index, spacing);
-        state.columns[index].y = randomBetween(-220, -40);
+        state.columns[index].y = randomBetween(-200, -30);
+        return;
       }
 
-      const current = state.columns[index];
-      context.font = `${current.size}px "IBM Plex Mono", monospace`;
-
-      const fadeHeight = current.size * 5.2;
-      const tailGradient = context.createLinearGradient(
-        current.x,
-        current.y - fadeHeight,
-        current.x,
-        current.y + current.size * 1.2
-      );
-      tailGradient.addColorStop(0, "rgba(0,0,0,0)");
-      tailGradient.addColorStop(0.35, `rgba(${current.color},${current.alpha * 0.32})`);
-      tailGradient.addColorStop(1, `rgba(${current.color},${current.alpha * 1.15})`);
-
-      context.fillStyle = tailGradient;
-      context.fillRect(current.x - 10, current.y - fadeHeight, 2, fadeHeight + current.size * 1.2);
-
-      context.shadowBlur = state.profile.shadowBlur;
-      context.shadowColor = `rgba(${current.color},0.18)`;
-      context.fillStyle = `rgba(${current.color},${Math.min(current.alpha * 1.28, 0.34)})`;
-      context.fillText(current.text, current.x, current.y);
-
-      if (current.shift) {
-        context.fillStyle = `rgba(224,224,224,${Math.min(current.alpha * 0.75, 0.28)})`;
-        context.fillText(">", current.x - 14, current.y);
-      }
-      context.shadowBlur = 0;
-
-      if (state.profile.drawMesh && index < state.columns.length - 1) {
-        const next = state.columns[index + 1];
-        if (Math.abs(current.y - next.y) < 90) {
-          context.beginPath();
-          context.moveTo(current.x + 10, current.y + current.size * 0.7);
-          context.lineTo(next.x - 10, next.y + next.size * 0.7);
-          context.strokeStyle = `rgba(0,229,255,0.045)`;
-          context.stroke();
-        }
-      }
+      context.font = `${column.size}px "IBM Plex Mono", monospace`;
+      context.fillStyle = `rgba(${column.color},${Math.min(column.alpha * 1.2, 0.3)})`;
+      context.fillText(column.text, column.x, column.y);
     });
 
     rafId = window.requestAnimationFrame(tick);
@@ -425,35 +332,14 @@ const createCanvasBackground = () => {
   };
 
   window.addEventListener("resize", resize, { passive: true });
-  window.addEventListener("orientationchange", () => {
-    resize();
-    startAnimation();
-  }, { passive: true });
-
-  window.addEventListener("pageshow", () => {
-    resize();
-    startAnimation();
-  });
-
+  window.addEventListener("orientationchange", () => { resize(); startAnimation(); }, { passive: true });
+  window.addEventListener("pageshow", () => { resize(); startAnimation(); });
   document.addEventListener("visibilitychange", () => {
-    if (document.hidden) {
-      stopAnimation();
-      return;
-    }
-
-    resize();
-    startAnimation();
+    if (document.hidden) { stopAnimation(); return; }
+    resize(); startAnimation();
   });
-
-  canvas.addEventListener("contextlost", (event) => {
-    event.preventDefault();
-    stopAnimation();
-  });
-
-  canvas.addEventListener("contextrestored", () => {
-    resize();
-    startAnimation();
-  });
+  canvas.addEventListener("contextlost", (event) => { event.preventDefault(); stopAnimation(); });
+  canvas.addEventListener("contextrestored", () => { resize(); startAnimation(); });
 
   resize();
   startAnimation();
@@ -748,6 +634,47 @@ const createGsapAnimations = () => {
         },
       }
     );
+
+    gsap.fromTo(
+      ".showcase-scissors",
+      { rotate: 52, x: 0, y: 0 },
+      {
+        rotate: 52,
+        x: -20,
+        y: 30,
+        ease: "none",
+        scrollTrigger: {
+          trigger: ".showcase-section",
+          start: "top 80%",
+          end: "bottom 20%",
+          scrub: true,
+        },
+      }
+    );
+
+    gsap.to(".showcase-scissors", {
+      scale: 1.08,
+      duration: 3,
+      repeat: -1,
+      yoyo: true,
+      ease: "sine.inOut",
+    });
+
+    gsap.fromTo(
+      ".showcase-device__screen",
+      { rotateY: -30, rotateX: 12 },
+      {
+        rotateY: 30,
+        rotateX: -12,
+        ease: "none",
+        scrollTrigger: {
+          trigger: ".showcase-section",
+          start: "top 80%",
+          end: "bottom 20%",
+          scrub: true,
+        },
+      }
+    );
   }
 };
 
@@ -763,22 +690,23 @@ const createCardHoverEffects = () => {
     let pointerEvent = null;
 
     const render = () => {
-      if (!pointerEvent) {
-        raf = 0;
-        return;
-      }
+      if (!pointerEvent) { raf = 0; return; }
 
       const rect = card.getBoundingClientRect();
       const x = pointerEvent.clientX - rect.left;
       const y = pointerEvent.clientY - rect.top;
-      const rotateY = ((x / rect.width) - 0.5) * 8;
-      const rotateX = (0.5 - (y / rect.height)) * 8;
+      const rotateY = ((x / rect.width) - 0.5) * 6;
+      const rotateX = (0.5 - (y / rect.height)) * 6;
 
       card.style.setProperty("--card-glow-x", `${x}px`);
       card.style.setProperty("--card-glow-y", `${y}px`);
-      card.style.transform = `perspective(900px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-4px)`;
+      card.style.transform = `perspective(900px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-3px)`;
       raf = 0;
     };
+
+    card.addEventListener("pointerenter", () => {
+      card.style.willChange = "transform";
+    }, { passive: true });
 
     card.addEventListener("pointermove", (event) => {
       pointerEvent = event;
@@ -788,19 +716,14 @@ const createCardHoverEffects = () => {
 
     card.addEventListener("pointerdown", () => {
       pointerEvent = null;
-      if (raf) {
-        window.cancelAnimationFrame(raf);
-        raf = 0;
-      }
+      if (raf) { window.cancelAnimationFrame(raf); raf = 0; }
     });
 
     card.addEventListener("pointerleave", () => {
       pointerEvent = null;
-      if (raf) {
-        window.cancelAnimationFrame(raf);
-        raf = 0;
-      }
+      if (raf) { window.cancelAnimationFrame(raf); raf = 0; }
       card.style.transform = "";
+      card.style.willChange = "";
     });
   });
 };
@@ -905,3 +828,218 @@ createIntroAutoScroll();
 createGsapAnimations();
 createCardHoverEffects();
 createTeamSwiper();
+
+const createGlitchParticles = () => {
+  if (prefersReducedMotion) return;
+
+  const panelFrame = document.querySelector(".hero-panel .panel-frame");
+  if (!panelFrame) return;
+
+  /* Fixed canvas — covers viewport, bypasses all clipping */
+  const cvs = document.createElement("canvas");
+  cvs.setAttribute("aria-hidden", "true");
+  cvs.style.cssText =
+    "position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9998;";
+  document.body.appendChild(cvs);
+
+  const ctx = cvs.getContext("2d");
+  let particles = [];
+  let rafId     = null;   // null = loop stopped (idle)
+
+  const WORDS  = ["404", "ERRO", "NULL", "ERR!", "BUG", "0x0", "FAIL", "???"];
+  const COLORS = [
+    [0, 229, 255],   // cyan
+    [255, 184, 0],   // gold
+    [0, 255, 65],    // matrix green
+    [255, 50, 100],  // red
+    [255, 255, 255], // white
+  ];
+
+  const resize = () => {
+    cvs.width  = window.innerWidth;
+    cvs.height = window.innerHeight;
+  };
+
+  const isPanelVisible = () => {
+    const r = panelFrame.getBoundingClientRect();
+    return r.bottom > 0 && r.top < window.innerHeight;
+  };
+
+  const spawnBurst = (minCount = 4, maxCount = 7) => {
+    if (!isPanelVisible()) return;
+
+    const fr = panelFrame.getBoundingClientRect();
+    const ox = fr.left, oy = fr.top, fw = fr.width, fh = fr.height;
+    const count = minCount + Math.floor(Math.random() * (maxCount - minCount + 1));
+
+    for (let i = 0; i < count; i++) {
+      const word  = WORDS[Math.floor(Math.random() * WORDS.length)];
+      const color = COLORS[Math.floor(Math.random() * COLORS.length)];
+      const size  = 10 + Math.random() * 12;
+      const edge  = Math.floor(Math.random() * 4);
+      let spawnX, spawnY, baseAngle;
+
+      switch (edge) {
+        case 0: spawnX = ox + Math.random() * fw; spawnY = oy;      baseAngle = -Math.PI / 2; break;
+        case 1: spawnX = ox + fw; spawnY = oy + Math.random() * fh; baseAngle = 0;             break;
+        case 2: spawnX = ox + Math.random() * fw; spawnY = oy + fh;  baseAngle = Math.PI / 2;  break;
+        default:spawnX = ox;      spawnY = oy + Math.random() * fh; baseAngle = Math.PI;       break;
+      }
+
+      const angle = baseAngle + (Math.random() - 0.5) * (Math.PI * 110 / 180);
+      const speed = 2.0 + Math.random() * 3.5;
+
+      particles.push({
+        x: spawnX, y: spawnY,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        word, color, size,
+        life:  1.0,
+        decay: 0.03 + Math.random() * 0.025,
+        rot:   (Math.random() - 0.5) * 0.6,
+        rotV:  (Math.random() - 0.5) * 0.06,
+        skew:  (Math.random() - 0.5) * 0.28,
+      });
+    }
+
+    startLoop(); // wake up rAF only when we have particles
+  };
+
+  /* Render loop — self-stops when particles array empties */
+  const loop = () => {
+    ctx.clearRect(0, 0, cvs.width, cvs.height);
+
+    for (let i = particles.length - 1; i >= 0; i--) {
+      const p = particles[i];
+      p.x   += p.vx;
+      p.y   += p.vy;
+      p.vy  += 0.05;
+      p.life -= p.decay;
+      p.rot  += p.rotV;
+
+      if (p.life <= 0) { particles.splice(i, 1); continue; }
+
+      const a = Math.max(0, p.life);
+      const [r, g, b] = p.color;
+
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot);
+      ctx.transform(1, 0, p.skew, 1, 0, 0);
+
+      ctx.font         = `bold ${p.size}px "IBM Plex Mono", monospace`;
+      ctx.textAlign    = "center";
+      ctx.textBaseline = "middle";
+      /* No shadowBlur — big GPU win */
+      ctx.fillStyle = `rgba(${r},${g},${b},${a.toFixed(2)})`;
+      ctx.fillText(p.word, 0, 0);
+      ctx.restore();
+    }
+
+    if (particles.length > 0) {
+      rafId = requestAnimationFrame(loop);
+    } else {
+      rafId = null; // stop — no canvas work until next burst
+    }
+  };
+
+  const startLoop = () => {
+    if (rafId === null) rafId = requestAnimationFrame(loop);
+  };
+
+  /* Sync with CSS: 6s cycle, burst at 64% = 3840ms */
+  const CYCLE  = 6000;
+  const OFFSET = 3840;
+
+  const syncAndStart = () => {
+    const delay = (OFFSET - (Date.now() % CYCLE) + CYCLE) % CYCLE;
+    setTimeout(() => {
+      spawnBurst();
+      setInterval(spawnBurst, CYCLE);
+    }, delay);
+  };
+
+  resize();
+  window.addEventListener("resize", resize, { passive: true });
+  syncAndStart();
+};
+
+createGlitchParticles();
+
+const createScheduleForm = () => {
+  const form     = document.getElementById("schedule-form");
+  const btn      = document.getElementById("schedule-submit");
+  const feedback = document.getElementById("schedule-feedback");
+  if (!form) return;
+
+  const setFeedback = (msg, isError = false) => {
+    if (!feedback) return;
+    feedback.textContent = msg;
+    feedback.className   = "form-feedback" + (isError ? " is-error" : "");
+  };
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    const name    = document.getElementById("call-name")?.value.trim()    ?? "";
+    const email   = document.getElementById("call-email")?.value.trim()   ?? "";
+    const time    = document.getElementById("call-time")?.value.trim()    ?? "";
+    const project = document.getElementById("call-project")?.value.trim() ?? "";
+
+    /* Basic validation */
+    if (!name) {
+      setFeedback("Por favor, informe seu nome.", true);
+      document.getElementById("call-name")?.focus();
+      return;
+    }
+    if (!email || !/^[^\s@]+@[^^\s@]+\.[^\s@]+$/.test(email)) {
+      setFeedback("Informe um e-mail válido para contato.", true);
+      document.getElementById("call-email")?.focus();
+      return;
+    }
+
+    /* Build mailto */
+    const subject = `[Call Request] ${name} — 404Devs`;
+    const body = [
+      `Olá, time 404Devs!`,
+      ``,
+      `Gostaria de agendar uma call para conversar sobre meu projeto.`,
+      ``,
+      `📋 Dados do solicitante`,
+      `Nome: ${name}`,
+      `E-mail de resposta: ${email}`,
+      `Melhor horário: ${time || "Não especificado"}`,
+      ``,
+      `📌 Objetivo do projeto`,
+      project || "Não especificado",
+      ``,
+      `---`,
+      `Mensagem enviada pelo formulário do site 404Devs.`,
+    ].join("\n");
+
+    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1`
+      + `&to=${encodeURIComponent("404devsoficial@gmail.com")}`
+      + `&su=${encodeURIComponent(subject)}`
+      + `&body=${encodeURIComponent(body)}`;
+
+    window.open(gmailUrl, "_blank", "noopener,noreferrer");
+
+    /* Visual feedback */
+    if (btn) {
+      btn.textContent = "✔ E-mail pronto! Confira seu cliente de e-mail.";
+      btn.classList.add("is-sent");
+    }
+    setFeedback("✔ Janela de e-mail aberta com os dados preenchidos.");
+
+    setTimeout(() => {
+      if (btn) {
+        btn.textContent = "Abrir e-mail para agendar";
+        btn.classList.remove("is-sent");
+      }
+      setFeedback("");
+    }, 6000);
+  });
+};
+
+createScheduleForm();
+
